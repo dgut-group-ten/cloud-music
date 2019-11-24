@@ -21,7 +21,7 @@
     </el-form-item>
     <el-form-item class="code">
       <el-input
-        v-model="registerInfo.checkCode"
+        v-model.number="registerInfo.checkCode"
         placeholder="验证码"
       ></el-input>
       <el-button @click="_checkCode" :disabled="disabled">{{ tip }}</el-button>
@@ -41,10 +41,10 @@ export default {
     return {
       labelPosition: 'right',
       registerInfo: {
-        email: '',
-        user_name: '',
-        user_password: '',
-        checkCode: ''
+        email: '455039690@qq.com',
+        user_name: 'fang',
+        user_password: '123456',
+        checkCode: null
       },
       send: 0,
       tip: '发送',
@@ -69,14 +69,17 @@ export default {
 
       checkCode(this.registerInfo.email).then(res => {
         console.log(res);
-        this.checkCode = res.data.checkCode;
+        this.$message({
+          message: res.message,
+          type: 'success'
+        })
       });
     },
     _register() {
       register(this.registerInfo).then(res => {
-        console.log(res);
         this.$message({
-          message: '注册成功'
+          message: res.message,
+          type: 'success'
         });
       });
     }

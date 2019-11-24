@@ -1,14 +1,18 @@
 import axios from '@/utils/axios.js';
 
 export const register = function register({checkCode, email, user_name, user_password}) {
+    console.log(checkCode, email, user_name, user_password);
     return axios({
         url: '/api/user',
         method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+          },
         data: {
-            checkCode,
-            emaill,
-            user_name,
-            user_password
+            checkCode: checkCode,
+            email: email,
+            user_name: user_name,
+            user_password: user_password
         }
     })
 }
