@@ -9,10 +9,10 @@ export const register = function register({checkCode, email, user_name, user_pas
             'Content-Type': 'application/json'
           },
         data: {
-            checkCode: checkCode,
-            email: email,
-            user_name: user_name,
-            user_password: user_password
+            checkCode,
+            email,
+            user_name,
+            user_password
         }
     })
 }
@@ -24,7 +24,7 @@ export const checkCode = function checkCode(to) {
         url: url,
         method: 'post',
         data: {
-            to: to
+            to
         }
     })
 }
