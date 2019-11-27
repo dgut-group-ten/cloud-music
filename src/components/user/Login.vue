@@ -29,12 +29,9 @@ export default {
         _login() {
             const that = this;
             login(that.userInfo).then(res => {
-                const {token, message} = res;
-                console.log(res);
-                console.log(token);
-                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("userInfo", res.data);
                 that.$message({
-                    message,
+                    message: res.message,
                     type: 'success'
                 });
                 that.$emit('hideDialog');

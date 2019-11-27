@@ -4,14 +4,14 @@
   >
     <el-form-item>
       <el-input
-        v-model="registerInfo.user_name"
+        v-model="registerInfo.name"
         placeholder="用户名"
         autofocus
       ></el-input>
     </el-form-item>
     <el-form-item>
       <el-input
-        v-model="registerInfo.user_password"
+        v-model="registerInfo.password"
         placeholder="密码"
         type="password"
       ></el-input>
@@ -42,8 +42,8 @@ export default {
       labelPosition: 'right',
       registerInfo: {
         email: '',
-        user_name: '',
-        user_password: '',
+        name: '',
+        password: '',
         checkCode: null
       },
       send: 0,
@@ -68,7 +68,6 @@ export default {
       }, 1000);
 
       checkCode(this.registerInfo.email).then(res => {
-        console.log(res);
         this.$message({
           message: res.message,
           type: 'success'
@@ -77,6 +76,7 @@ export default {
     },
     _register() {
       register(this.registerInfo).then(res => {
+        console.log(res)
         this.$message({
           message: res.message,
           type: 'success'
