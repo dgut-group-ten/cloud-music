@@ -5,7 +5,7 @@
     <el-dialog :visible.sync="dialogVisible" width="35%" :title="title">
       <el-tabs type="card" stretch v-model="name" @tab-click="clickHandle">
         <el-tab-pane label="登录" name="first">
-          <Login></Login>
+          <Login @hideDialog="hideDialog"></Login>
         </el-tab-pane>
         <el-tab-pane label="注册" name="second">
           <Register></Register>
@@ -38,11 +38,16 @@ export default {
   methods: {
     loginHandle() {
       this.dialogVisible = true;
+      document.querySelector('.el-dialog').classList.add('side-in');
     },
     clickHandle(e) {
       if(e.name === 'first') this.title = '用户名登录';
       else this.title = '邮箱注册';
     },
+    hideDialog() {
+      this.dialogVisible = false;
+      document.querySelector('.el-dialog').classList.remove('side-in');
+    }
   }
 };
 </script>
@@ -50,6 +55,7 @@ export default {
 
 <style lang="less">
 @import "../styles/common.less";
+@import "../styles/animation.css";
 
 .home {
   .el-dialog {

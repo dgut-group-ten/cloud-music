@@ -41,9 +41,9 @@ export default {
     return {
       labelPosition: 'right',
       registerInfo: {
-        email: '455039690@qq.com',
-        user_name: 'fang',
-        user_password: '123456',
+        email: '',
+        user_name: '',
+        user_password: '',
         checkCode: null
       },
       send: 0,

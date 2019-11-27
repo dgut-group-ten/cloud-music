@@ -1,10 +1,10 @@
 <template>
     <el-form :model="userInfo">
         <el-form-item>
-            <el-input v-model="userInfo.user_name" placeholder="用户名"></el-input>
+            <el-input v-model="userInfo.name" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-input v-model="userInfo.user_password" placeholder="密码"></el-input>
+            <el-input v-model="userInfo.password" placeholder="密码"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button @click="_login" type="primary">登录</el-button>
@@ -20,15 +20,24 @@ export default {
         return {
             labelPosition: 'right',
             userInfo: {
-                user_name: '',
-                user_password: ''
+                name: '',
+                password: ''
             }
         }
     },
     methods: {
         _login() {
-            login(this.userInfo).then(res => {
+            const that = this;
+            login(that.userInfo).then(res => {
+                const {token, message} = res;
                 console.log(res);
+                console.log(token);
+                sessionStorage.setItem("token", token);
+                that.$message({
+                    message,
+                    type: 'success'
+                });
+                that.$emit('hideDialog');
             })
         }
     }

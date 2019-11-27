@@ -5,7 +5,8 @@
     <el-menu-item index="3">朋友</el-menu-item>
     <el-menu-item index="4">商城</el-menu-item>
     <el-menu-item index="5">音乐人</el-menu-item>
-    <el-menu-item @click="_loginHandle">登录</el-menu-item>
+    <el-menu-item @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
+    <el-menu-item v-if="isLogin">{{userInfo.name}}</el-menu-item>
   </el-menu>
 </template>
 
@@ -14,12 +15,14 @@ export default {
   name: 'Head',
   data() {
     return {
-        activeIndex: '1'
+      activeIndex: '1',
+      isLogin: false,
+      userInfo: null
     };
   },
   methods: {
     _loginHandle() {
-        this.$emit('loginHandle');
+      this.$emit('loginHandle');
     }
   }
 };
