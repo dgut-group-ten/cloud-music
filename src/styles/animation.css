@@ -1,0 +1,18 @@
+@keyframes sideIn {
+  from{
+    transform: rotateX(-90deg);
+  }
+  80%{
+    transform: rotateX(10deg);
+  }
+  to{
+    transform: rotateX(0deg);
+  }
+}
+
+.side-in{
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  animation:sideIn .4s;
+  animation-fill-mode: forwards;
+}
