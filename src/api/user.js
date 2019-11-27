@@ -8,8 +8,8 @@ export const register = function register({checkCode, email, name, password}) {
         url: `${baseURL}/user`,
         method: 'post',
         headers: {
-            'Content-Type': 'application/json'
-          },
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
         data: {
             checkCode,
             email,
