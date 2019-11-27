@@ -1,9 +1,11 @@
 import axios from '@/utils/axios.js';
 
-export const register = function register({checkCode, email, user_name, user_password}) {
-    console.log(checkCode, email, user_name, user_password);
+const baseURL = 'http://music.niracler.com:8001';
+
+export const register = function register({checkCode, email, name, password}) {
+    console.log(checkCode, email, name, password);
     return axios({
-        url: '/api/user',
+        url: `${baseURL}/user`,
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -11,15 +13,15 @@ export const register = function register({checkCode, email, user_name, user_pas
         data: {
             checkCode,
             email,
-            user_name,
-            user_password
+            name,
+            password
         }
     })
 }
 
 
 export const checkCode = function checkCode(to) {
-    const url = '/api/email';
+    const url = `${baseURL}/email`;
     return axios({
         url: url,
         method: 'post',
@@ -29,13 +31,13 @@ export const checkCode = function checkCode(to) {
     })
 }
 
-export const login = function login({user_name, user_password}) {
+export const login = function login({name, password}) {
     return axios({
-        url: '/api/user/token',
+        url: `${baseURL}/user/token`,
         method: 'post',
         data: {
-            user_name,
-            user_password
+            name,
+            password
         }
     })
 }
