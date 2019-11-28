@@ -29,12 +29,12 @@ export default {
         _login() {
             const that = this;
             login(that.userInfo).then(res => {
-                sessionStorage.setItem("userInfo", res.data);
                 that.$message({
                     message: res.message,
                     type: 'success'
                 });
                 that.$emit('hideDialog');
+                that.$store.dispatch('logined',res.data);
             })
         }
     }

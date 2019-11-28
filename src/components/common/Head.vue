@@ -6,7 +6,7 @@
     <el-menu-item index="4">商城</el-menu-item>
     <el-menu-item index="5">音乐人</el-menu-item>
     <el-menu-item @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
-    <el-menu-item v-if="isLogin">{{userInfo.name}}</el-menu-item>
+    <el-menu-item v-if="isLogin" class="user-info">{{userInfo.name}}</el-menu-item>
   </el-menu>
 </template>
 
@@ -16,7 +16,6 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      isLogin: false,
       userInfo: null
     };
   },
@@ -24,15 +23,43 @@ export default {
     _loginHandle() {
       this.$emit('loginHandle');
     }
-  }
+  },
+  created() {
+    let state = JSON.parse(localStorage.getItem("state") || null);
+    if (state) {
+      this.userInfo = state.userInfo;
+    }
+  },
+  computed: {
+    isLogin:{
+      get(){
+        return this.$store.state.userInfo == null ? false : true; 
+      },
+      // 暂时用不到，规范而已
+      set(newValue){}
+    }
+  },
+  watch: {
+    isLogin(newValue, oldValue) {
+      if (newValue === true) {
+        let state = JSON.parse(localStorage.getItem("state") || null);
+        if (state) {
+          this.userInfo = state.userInfo;
+        }
+      }
+    }
+  },
 };
 </script>
 
 <style lang="less" scoped>
 @import '../../styles/common.less';
 .el-menu {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 0 180px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 180px;
+  .user-info{
+    float: right;
+  }
 }
 </style>
