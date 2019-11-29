@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <Head @loginHandle="loginHandle"></Head>
-
+    <router-view/>
+    
     <el-dialog :visible.sync="dialogVisible" width="35%" :title="title">
       <el-tabs type="card" stretch v-model="name">
         <el-tab-pane label="登录" name="first">
