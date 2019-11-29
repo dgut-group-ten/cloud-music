@@ -15,12 +15,19 @@ export default new Vuex.Store({
   mutations: {
     LOGINED(state, data){
       state.userInfo = data;
-      storeLocalStore (state);
+      storeLocalStore(state);
+    },
+    LOGOUT(state) {
+      state.userInfo = null;
+      storeLocalStore(state);
     }
   },
   actions: {
     logined({commit}, data) {
       commit('LOGINED', data);
+    },
+    logout({commit}) {
+      commit('LOGOUT');
     }
   },
   modules: {
