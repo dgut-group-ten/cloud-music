@@ -1,14 +1,25 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
+import Main from '@/components/playlist/Main.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
+    redirect: '/main'
+  },
+  {
+    path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    children:[ 
+      {
+        path:'main',
+        component: Main
+      }
+  ]
   }
 ];
 
