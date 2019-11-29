@@ -15,6 +15,7 @@
 export default {
   created (){
      //在页面加载时读取localStorage里的状态信息
+     // TODO:发送请求验证Token是否过期
     localStorage.getItem("state") && this.$store.replaceState(JSON.parse(localStorage.getItem("state")));
     
     //在页面刷新时将vuex里的信息保存到localStorage里
