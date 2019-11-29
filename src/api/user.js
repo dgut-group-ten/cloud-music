@@ -3,7 +3,6 @@ import axios from '@/utils/axios.js';
 const baseURL = 'http://music.niracler.com:8001';
 
 export const register = function register({checkCode, email, name, password}) {
-    console.log(checkCode, email, name, password);
     return axios({
         url: `${baseURL}/user`,
         method: 'post',
