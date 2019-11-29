@@ -27,14 +27,18 @@ export default {
     },
     methods: {
         _login() {
-            const that = this;
-            login(that.userInfo).then(res => {
-                that.$message({
+            login(this.userInfo)
+            .then(res => {
+                this.$message({
                     message: res.message,
                     type: 'success'
                 });
-                that.$emit('hideDialog');
-                that.$store.dispatch('logined',res.data);
+                this.$emit('hideDialog');
+                this.$store.dispatch('logined',res.data);
+            })
+            .catch(err => {
+                let message = err.response.data.msg || err.message;
+                this.$message.error(message);
             })
         }
     }

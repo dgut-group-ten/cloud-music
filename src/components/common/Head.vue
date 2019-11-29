@@ -5,10 +5,10 @@
     <el-menu-item index="3">朋友</el-menu-item>
     <el-menu-item index="4">商城</el-menu-item>
     <el-menu-item index="5">音乐人</el-menu-item>
-    <el-menu-item @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
-    <el-submenu v-if="isLogin" class="user-info">
+    <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
+    <el-submenu index="7" v-if="isLogin" class="user-info">
       <template slot="title">{{userInfo.name}}</template>
-      <el-menu-item @click="_logout">退出登录</el-menu-item>
+      <el-menu-item index="7-1" @click="_logout">退出登录</el-menu-item>
     </el-submenu>
   </el-menu>
 </template>

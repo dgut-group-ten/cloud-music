@@ -67,21 +67,40 @@ export default {
         }
       }, 1000);
 
-      checkCode(this.registerInfo.email).then(res => {
+      checkCode(this.registerInfo.email)
+      .then(res => {
         this.$message({
           message: res.message,
           type: 'success'
         })
+      })
+      .catch(err => {
+        let message = err.response.data.msg || err.message;
+        this.$message.error(message);
       });
     },
     _register() {
-      register(this.registerInfo).then(res => {
-        console.log(res)
+      register(this.registerInfo)
+      .then(res => {
         this.$message({
           message: res.message,
           type: 'success'
         });
-      });
+        this._initRegisterInfo();
+        this.$emit('registered');
+      })
+      .catch(err => {
+        let message = err.response.data.msg || err.message;
+        this.$message.error(message);
+      })
+    },
+    _initRegisterInfo() {
+      this.registerInfo = {
+        email: '',
+        name: '',
+        password: '',
+        checkCode: null
+      }
     }
   }
 };
