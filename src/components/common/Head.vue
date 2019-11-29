@@ -1,6 +1,6 @@
 <template>
   <el-menu :default-active="activeIndex" background-color="#545c64" mode="horizontal" text-color="#fff" active-text-color="#c40b0b">
-    <el-menu-item index="1">发现音乐</el-menu-item>
+    <el-menu-item index="1">首页</el-menu-item>
     <el-menu-item index="2">我的音乐</el-menu-item>
     <el-menu-item index="3">朋友</el-menu-item>
     <el-menu-item index="4">商城</el-menu-item>
