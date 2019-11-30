@@ -13,9 +13,11 @@
       </li>
     </ul>
     <section class="gallery-main">
-      <el-carousel type="card" height="300px" :autoplay="false" trigger="click">
+      <el-carousel type="card" height="300px" :autoplay="false" trigger="click" 
+        ref="carousel" @click.native="_toDetailPage"> 
         <el-carousel-item v-for="(item, index) in playlist" :key="index">
-          <span class="gallery-main__text">{{ item.name }}</span>
+          <img class="gallery-main__img" src="https://s2.ax1x.com/2019/11/13/MGTB4J.md.jpg">
+          <div class="gallery-main__text">{{ item.name }}</div>
         </el-carousel-item>
       </el-carousel>
     </section>
@@ -51,6 +53,14 @@ export default {
       .then(res => {
         this.playlist = res.results;
       });
+    },
+    _toDetailPage(e) {
+      // 点击到mask上不进行跳转
+      if (e.target._prevClass !== 'gallery-main__img') {
+        return;
+      }
+      let lid = this.playlist[this.$refs.carousel.activeIndex].lid;
+      this.$router.push({name:'detail', query: {lid}});
     }
   }
 }
@@ -68,7 +78,7 @@ export default {
     padding-top: 50px;
     padding-bottom: 30px;
     text-align: center;
-    font-size: @fs-xxl;
+    font-size: @fs-xxxl;
     font-weight: @fw;
     letter-spacing: 8px;
   }
@@ -87,21 +97,26 @@ export default {
     }
   }
   .gallery-main {
+    .gallery-main__img{
+      width:100%;
+      height:100%;
+      background-size: 725px 725px;
+      &:hover{
+        transform: scale(1.1) translateZ(0);
+        transition: transform .75s;
+      }
+    }
     .gallery-main__text{
       position: absolute;
-      top:90%;
+      top:85%;
       color:@text-color;
-      margin-left: 10px;
-      width: 400px;
+      padding: 10px 0 5% 10px;
+      width: 100%;
+      font-size: @fs-xxl;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-    }
-    .el-carousel__item:nth-child(2n) {
-      background-color: #99a9bf;
-    }
-    .el-carousel__item:nth-child(2n + 1) {
-      background-color: #d3dce6;
+      background: rgba(255,255,255,.3);
     }
   }
 }
