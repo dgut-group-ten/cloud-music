@@ -16,7 +16,7 @@
       <el-carousel type="card" height="300px" :autoplay="false" trigger="click" 
         ref="carousel" @click.native="_toDetailPage"> 
         <el-carousel-item v-for="(item, index) in playlist" :key="index">
-          <img class="gallery-main__img" src="https://s2.ax1x.com/2019/11/13/MGTB4J.md.jpg">
+          <img class="gallery-main__img" :src="item.cimg">
           <div class="gallery-main__text">{{ item.name }}</div>
         </el-carousel-item>
       </el-carousel>
@@ -100,7 +100,7 @@ export default {
     .gallery-main__img{
       width:100%;
       height:100%;
-      background-size: 725px 725px;
+      object-fit: cover;
       &:hover{
         transform: scale(1.1) translateZ(0);
         transition: transform .75s;
@@ -116,7 +116,7 @@ export default {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      background: rgba(255,255,255,.3);
+      background: rgba(255,255,255,.7);
     }
   }
 }
