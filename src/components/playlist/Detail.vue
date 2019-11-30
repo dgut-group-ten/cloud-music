@@ -5,7 +5,7 @@
       <!-- 歌单封面 -->
       <div class="data-cover">
         <img
-          src="https://qpic.y.qq.com/music_cover/Uj77DagTFgiccudSicYvppRmLiaOePF980QibHby0Gha0EaKVdzx69qZCg/300?n=1"
+          :src="playlist.cimg"
           class="data-photo"
         />
       </div>
@@ -42,18 +42,25 @@
       </div>
     </div>
     <!-- 歌单详细 -->
-    <div class="detail">
-      <div class="song-list">
-        <el-table :data="playlist.tracks" style="width: 60%" stripe>
-          <el-table-column type="index" :index="indexMethod" width="80">
-          </el-table-column>
-          <el-table-column prop="name" label="歌曲" width="220">
-          </el-table-column>
-          <el-table-column prop="authors[0].name" label="歌手"> </el-table-column>
-        </el-table>
-      </div>
-      <div class="desc"></div>
-    </div>
+    <el-row class="detail" :gutter="40">
+      <!-- 歌曲列表 -->
+      <el-col :span="14">
+        <div>
+          <el-table :data="playlist.tracks" style="width: 100%" stripe>
+            <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
+            <el-table-column prop="name" label="歌曲" width="350"></el-table-column>
+            <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
+          </el-table>
+        </div>
+      </el-col>
+      <!-- 歌单简介 -->
+      <el-col :span="5" class="desc">
+        <h1>简介</h1>
+        <div>
+          {{playlist.description}}
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -122,6 +129,11 @@ export default {
       content: '';
       display: block;
       clear: both;
+    }
+  }
+  .detail{
+    .desc{
+      margin-top: 20px;
     }
   }
 }
