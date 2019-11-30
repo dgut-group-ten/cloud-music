@@ -8,3 +8,10 @@ export const getPlaylistByTagName = function (name) {
     method: 'get'
   })
 }
+
+export const getPlaylistDetailByLid = function(lid) {
+  return axios({
+    url: `${baseURL}/playlist/${lid}`,
+    method: 'get'
+  })
+}
