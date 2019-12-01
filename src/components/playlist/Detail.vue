@@ -44,19 +44,19 @@
     <!-- 歌单详细 -->
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
-      <el-col :span="14">
+      <el-col :span="15">
         <div>
           <el-table :data="playlist.tracks" style="width: 100%" stripe>
             <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
-            <el-table-column prop="name" label="歌曲" width="350"></el-table-column>
+            <el-table-column prop="name" label="歌曲" width="330"></el-table-column>
             <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
           </el-table>
         </div>
       </el-col>
       <!-- 歌单简介 -->
       <el-col :span="5" class="desc">
-        <h1>简介</h1>
-        <div>
+        <h3 class="desc-title">简介</h3>
+        <div class="desc-cont">
           {{playlist.description}}
         </div>
       </el-col>
@@ -132,8 +132,16 @@ export default {
     }
   }
   .detail{
+    margin-top: 20px;
     .desc{
-      margin-top: 20px;
+      .desc-title{
+        font-weight: @fw-l;
+      }
+      .desc-cont{
+        margin-top: 10px;
+        font-size: @fs-s;
+        line-height: 1.7;
+      }
     }
   }
 }
