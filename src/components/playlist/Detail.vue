@@ -50,7 +50,7 @@
           <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
           <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
         </el-table>
-        <el-pagination v-if="total !== 1"
+        <el-pagination v-if="total > 10"
           class="detail-pagination"
           background
           layout="prev, pager, next"
@@ -68,11 +68,14 @@
         </div>
       </el-col>
     </el-row>
+    <!-- 评论 -->
+    <comment></comment>
   </div>
 </template>
 
 <script>
 import { getPlaylistDetailByLid } from '@/api/playlist.js'
+import Comment from '@/components/common/Comment.vue'
 
 export default {
   name: 'Detail',
@@ -91,6 +94,9 @@ export default {
       this.total = res.tracks.length;
       this.curList = this.playlist.tracks.slice((this.curPage-1)*10,this.curPage*10);
     })
+  },
+  components:{
+    Comment,
   },
   methods:{
     indexMethod(index) {
