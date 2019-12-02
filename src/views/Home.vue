@@ -2,7 +2,8 @@
   <div class="home">
     <Head @loginHandle="loginHandle"></Head>
     <router-view/>
-    
+    <Foot></Foot>
+
     <el-dialog :visible.sync="dialogVisible" width="35%" :title="title">
       <el-tabs type="card" stretch v-model="name">
         <el-tab-pane label="登录" name="first">
@@ -21,13 +22,15 @@
 import Head from '@/components/common/Head.vue';
 import Register from '@/components/user/Register.vue';
 import Login from '@/components/user/Login.vue';
+import Foot from '@/components/common/Foot.vue';
 
 export default {
   name: 'home',
   components: {
     Head,
     Register,
-    Login
+    Login,
+    Foot
   },
   data() {
     return {
