@@ -1,6 +1,6 @@
 import axios from '@/utils/axios.js';
 
-const baseURL = 'http://music.niracler.com:8001';
+const baseURL = 'https://music.niracler.com:8001';
 
 export const register = function register({checkCode, email, name, password}) {
     return axios({

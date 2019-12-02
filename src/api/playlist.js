@@ -3,12 +3,12 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-01 22:54:57
+ * @LastEditTime: 2019-12-02 11:16:47
  */
 
 import axios from '@/utils/axios.js';
 
-const baseURL = 'http://music.niracler.com:8002';
+const baseURL = 'https://music.niracler.com:8002';
 
 /**
  * @description: 根据标签名获取歌单列表
