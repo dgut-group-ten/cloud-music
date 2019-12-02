@@ -1,5 +1,7 @@
 <template>
   <div class="main" v-if="playlist">
+    <!-- 面包屑 -->
+    <Breadcrumb></Breadcrumb>
     <!-- 歌单基本信息 -->
     <div class="data">
       <!-- 歌单封面 -->
@@ -54,7 +56,7 @@
           class="detail-pagination"
           background
           layout="prev, pager, next"
-          :pager-count="10"
+          :pager-count="5"
           :page-size="10"
           :total="total"
           :current-page.sync="curPage">
@@ -74,8 +76,9 @@
 </template>
 
 <script>
-import { getPlaylistDetailByLid } from '@/api/playlist.js'
-import Comment from '@/components/common/Comment.vue'
+import { getPlaylistDetailByLid } from '@/api/playlist.js';
+import Comment from '@/components/common/Comment.vue';
+import Breadcrumb from '@/components/common/Breadcrumb.vue';
 
 export default {
   name: 'Detail',
@@ -97,6 +100,7 @@ export default {
   },
   components:{
     Comment,
+    Breadcrumb,
   },
   methods:{
     indexMethod(index) {
@@ -118,7 +122,7 @@ export default {
   padding: 0 7.5%;
   background: @content-bg-color;
   .data {
-    padding-top: 40px;
+    padding-top: 20px;
     padding-bottom: 10px;
     .data-cover {
       float: left;
