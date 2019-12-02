@@ -1,19 +1,19 @@
 <template>
   <el-menu :default-active="activeIndex" background-color="#545c64" mode="horizontal" text-color="#fff" active-text-color="#c40b0b">
     <el-menu-item index="1">
-      <router-link to="/home/main">首页</router-link>
+      <router-link to="/home">首页</router-link>
     </el-menu-item>
     <el-menu-item index="2">
-      <router-link to="/home/main">我的音乐</router-link>
+      <router-link to="/home">我的音乐</router-link>
     </el-menu-item>
     <el-menu-item index="3">
-      <router-link to="/home/main">MV</router-link>
+      <router-link to="/home">MV</router-link>
     </el-menu-item>
     <el-menu-item index="4">
-      <router-link to="/home/main">电台</router-link>
+      <router-link to="/home">电台</router-link>
     </el-menu-item>
     <el-menu-item index="5">
-      <router-link to="/home/main">歌手</router-link>
+      <router-link to="/home">歌手</router-link>
     </el-menu-item>
     <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
     <el-submenu index="7" v-if="isLogin" class="user-info">
