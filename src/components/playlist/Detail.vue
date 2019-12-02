@@ -45,13 +45,20 @@
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
       <el-col :span="15">
-        <div>
-          <el-table :data="playlist.tracks" style="width: 100%" stripe>
-            <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
-            <el-table-column prop="name" label="歌曲" width="330"></el-table-column>
-            <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
-          </el-table>
-        </div>
+        <el-table :data="curList" style="width: 100%" stripe>
+          <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
+          <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
+          <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
+        </el-table>
+        <el-pagination v-if="total !== 1"
+          class="detail-pagination"
+          background
+          layout="prev, pager, next"
+          :pager-count="10"
+          :page-size="10"
+          :total="total"
+          :current-page.sync="curPage">
+        </el-pagination>
       </el-col>
       <!-- 歌单简介 -->
       <el-col :span="5" class="desc">
@@ -71,20 +78,30 @@ export default {
   name: 'Detail',
   data() {
     return {
-      playlist: null
+      playlist: null,
+      total:null,
+      curPage: 1,
+      curList:null
     }
   },
   created() {
     let lid = this.$route.query.lid
     getPlaylistDetailByLid(lid).then(res => {
       this.playlist = res
+      this.total = res.tracks.length;
+      this.curList = this.playlist.tracks.slice((this.curPage-1)*10,this.curPage*10);
     })
   },
   methods:{
     indexMethod(index) {
-      return index + 1;
+      return (this.curPage-1)*10+index + 1;
     }
-  }
+  },
+  watch: {
+    curPage(newValue, oldValue){
+      this.curList = this.playlist.tracks.slice((newValue-1)*10,newValue*10);
+    }
+  },
 }
 </script>
 <style scoped lang="less">
@@ -133,15 +150,17 @@ export default {
   }
   .detail{
     margin-top: 20px;
-    .desc{
-      .desc-title{
-        font-weight: @fw-l;
-      }
-      .desc-cont{
-        margin-top: 10px;
-        font-size: @fs-s;
-        line-height: 1.7;
-      }
+    .detail-pagination{
+      margin-top: 10px;
+      text-align: center;
+    }
+    .desc-title{
+      font-weight: @fw-l;
+    }
+    .desc-cont{
+      margin-top: 10px;
+      font-size: @fs-s;
+      line-height: 1.7;
     }
   }
 }
