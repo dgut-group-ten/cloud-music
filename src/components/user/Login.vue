@@ -4,7 +4,7 @@
             <el-input v-model="userInfo.name" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-input v-model="userInfo.password" placeholder="密码"></el-input>
+            <el-input v-model="userInfo.password" placeholder="密码" show-password></el-input>
         </el-form-item>
         <el-form-item>
             <el-button @click="_login" type="primary">登录</el-button>
