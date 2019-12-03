@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-02 11:16:47
+ * @LastEditTime: 2019-12-03 21:11:38
  */
 
 import axios from '@/utils/axios.js';
@@ -31,6 +31,18 @@ export const getPlaylistByTagName = function (name) {
 export const getPlaylistDetailByLid = function(lid) {
   return axios({
     url: `${baseURL}/playlist/${lid}`,
+    method: 'get'
+  })
+}
+
+/**
+ * @description: 根据歌曲id获得该歌曲的详情
+ * @param {sid: 歌曲ID} 
+ * @return: 歌曲详细信息
+ */
+export const getSingleSong = function(sid) {
+  return axios({
+    url: `${baseURL}/song/${sid}`,
     method: 'get'
   })
 }
