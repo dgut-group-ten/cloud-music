@@ -1,9 +1,9 @@
 <template>
   <div class="main" v-if="playlist">
-    <!-- 面包屑 -->
-    <Breadcrumb></Breadcrumb>
     <!-- 歌单基本信息 -->
     <div class="data">
+      <!-- 面包屑 -->
+      <Breadcrumb></Breadcrumb>
       <!-- 歌单封面 -->
       <div class="data-cover">
         <img
@@ -46,11 +46,29 @@
     <!-- 歌单详细 -->
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
-      <el-col :span="15">
-        <el-table :data="curList" style="width: 100%" stripe>
+      <el-col :span="18">
+        <el-table :data="curList" style="width: 100%" stripe
+          @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
           <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
           <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
           <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
+          <!-- 按钮组 -->
+          <el-table-column label="操作">
+            <div class="hide">
+              <el-tooltip effect="light" content="播放" placement="bottom-start">
+                <el-button icon="el-icon-caret-right" circle></el-button>
+              </el-tooltip>
+              <el-tooltip effect="light" content="添加到歌单" placement="bottom-start">
+                <el-button icon="el-icon-plus" circle></el-button>
+              </el-tooltip>
+              <el-tooltip effect="light" content="下载" placement="bottom-start">
+                <el-button icon="el-icon-download" circle></el-button>
+              </el-tooltip>
+              <el-tooltip effect="light" content="分享" placement="bottom-start">
+                <el-button icon="el-icon-share" circle></el-button>
+              </el-tooltip>
+            </div>
+          </el-table-column>
         </el-table>
         <el-pagination v-if="total > 10"
           class="detail-pagination"
@@ -71,7 +89,7 @@
       </el-col>
     </el-row>
     <!-- 评论 -->
-    <comment></comment>
+    <comment class="comment"></comment>
   </div>
 </template>
 
@@ -105,6 +123,12 @@ export default {
   methods:{
     indexMethod(index) {
       return (this.curPage-1)*10+index + 1;
+    },
+    showBtnGroup(row, column, cell, event){
+      cell.parentNode.children[3].children[0].children[0].classList.remove('hide');
+    },
+    hideBtnGroup(row, column, cell, event){
+      cell.parentNode.children[3].children[0].children[0].classList.add('hide');
     }
   },
   watch: {
@@ -119,11 +143,11 @@ export default {
 
 .main {
   width: 100%;
-  padding: 0 7.5%;
-  background: @content-bg-color;
+  padding-bottom: 100px;
   .data {
-    padding-top: 20px;
+    padding: 0 7.5%;
     padding-bottom: 10px;
+    background: @content-bg-color;
     .data-cover {
       float: left;
       .data-photo {
@@ -159,9 +183,16 @@ export default {
     }
   }
   .detail{
+    padding: 0 7.5%;
     margin-top: 20px;
+    .el-table-column .el-button{
+      margin: 0;
+    }
+    .hide{
+      display: none;
+    }
     .detail-pagination{
-      margin-top: 10px;
+      margin-top: 20px;
       text-align: center;
     }
     .desc-title{
@@ -172,6 +203,9 @@ export default {
       font-size: @fs-s;
       line-height: 1.7;
     }
+  }
+  .comment{
+    padding: 0 7.5%;
   }
 }
 </style>
