@@ -32,6 +32,9 @@
             <li class="data-tag">{{ item }}</li>
           </ul>
         </div>
+        <div>
+          播放量：{{playlist.click}}
+        </div>
         <!-- 按钮组 -->
         <el-row>
           <el-button type="primary" icon="el-icon-video-play"
@@ -47,7 +50,7 @@
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
       <el-col :span="18">
-        <el-table :data="curList" style="width: 100%" stripe
+        <el-table :data="curList" stripe
           @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
           <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
           <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
@@ -56,7 +59,7 @@
           <el-table-column label="操作">
             <div class="hide">
               <el-tooltip effect="light" content="播放" placement="bottom-start">
-                <el-button icon="el-icon-caret-right" circle></el-button>
+                <el-button icon="el-icon-caret-right" circle @click="playSong($event)"></el-button>
               </el-tooltip>
               <el-tooltip effect="light" content="添加到歌单" placement="bottom-start">
                 <el-button icon="el-icon-plus" circle></el-button>
@@ -129,6 +132,13 @@ export default {
     },
     hideBtnGroup(row, column, cell, event){
       cell.parentNode.children[3].children[0].children[0].classList.add('hide');
+    },
+    playSong(e){
+      let td = e.currentTarget.parentNode.parentNode.parentNode
+      let tr = td.parentNode;
+      let index = tr.children[0].children[0].children[0].innerHTML;
+      let sid = this.playlist.tracks[index-1].sid;
+      this.$router.push({name:'player', query: {sid}});
     }
   },
   watch: {
@@ -160,7 +170,11 @@ export default {
       margin-top: 30px;
       margin-left: 280px;
       & > div {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
+        font-size: @fs;
+      }
+      & > div:nth-child(2) {
+        margin-top: 18px;
       }
       & > div:nth-last-child(2) {
         margin-bottom: 50px;
