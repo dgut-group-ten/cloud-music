@@ -50,5 +50,6 @@ export default {
 <style scoped lang='less'>
   .el-breadcrumb{
     padding-top: 20px;
+    padding-bottom: 20px;
   }
 </style>
