@@ -28,7 +28,41 @@
             <div class="comment-desc__time">1月8日 13:37</div>
           </div>
           <div class="comment-operator">
-            
+            <div class="like active">
+              <i class="el-icon-thumb"></i>
+              <span>3</span>
+            </div>
+            <i class="el-icon-chat-dot-square active"></i>
+          </div>
+        </li>
+        <li class="comment-item">
+          <img class="avatar" src="https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=5f4834870d3b5bb5bad727fc06d2d523/2e2eb9389b504fc2a21e8529ebdde71190ef6d5c.jpg">
+          <div class="comment-desc">
+            <div class="comment-desc__name">新垣结衣</div>
+            <div class="comment-desc__cont">あなたのことが好きです</div>
+            <div class="comment-desc__time">1月8日 13:37</div>
+          </div>
+          <div class="comment-operator">
+            <div class="like active">
+              <i class="el-icon-thumb"></i>
+              <span>3</span>
+            </div>
+            <i class="el-icon-chat-dot-square active"></i>
+          </div>
+        </li>
+        <li class="comment-item">
+          <img class="avatar" src="https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=5f4834870d3b5bb5bad727fc06d2d523/2e2eb9389b504fc2a21e8529ebdde71190ef6d5c.jpg">
+          <div class="comment-desc">
+            <div class="comment-desc__name">新垣结衣</div>
+            <div class="comment-desc__cont">あなたのことが好きです</div>
+            <div class="comment-desc__time">1月8日 13:37</div>
+          </div>
+          <div class="comment-operator">
+            <div class="like active">
+              <i class="el-icon-thumb"></i>
+              <span>3</span>
+            </div>
+            <i class="el-icon-chat-dot-square active"></i>
           </div>
         </li>
       </ul>
@@ -85,7 +119,7 @@ export default {
         width: 74%;
         .comment-item{
           padding-top: 12px;
-          margin-bottom: 25px;
+          margin-bottom: 40px;
           border-top: 1px solid #ededed;
           .avatar{
             width: 38px;
@@ -104,6 +138,20 @@ export default {
               margin-top: 10px;
             }
 
+          }
+          .comment-operator{
+            float: right;
+            margin-right: 10px;
+            .like{
+              display: inline;
+              margin-right: 15px;
+              span{
+                margin-left: 5px;
+              }
+            }
+            .active:hover{
+              color: @color-active;
+            }
           }
         }
       }
