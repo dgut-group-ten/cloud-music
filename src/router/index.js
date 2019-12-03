@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
+import Player from '../views/Player.vue';
 import Main from '@/components/playlist/Main.vue';
 import Detail from '@/components/playlist/Detail.vue';
 
@@ -26,7 +27,12 @@ const routes = [
         name:'detail',
         component: Detail
       }
-  ]
+    ]
+  },
+  {
+    path: '/player',
+    name: 'player',
+    component: Player
   }
 ];
 
