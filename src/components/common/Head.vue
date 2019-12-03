@@ -15,11 +15,18 @@
     <el-menu-item index="5">
       <router-link to="/home">歌手</router-link>
     </el-menu-item>
-    <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin">登录</el-menu-item>
-    <el-submenu index="7" v-if="isLogin" class="user-info">
+    <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin" class="fr">登录</el-menu-item>
+    <el-submenu index="7" v-if="isLogin" class="fr">
       <template slot="title">{{userInfo.name}}</template>
       <el-menu-item index="7-1" @click="_logout">退出登录</el-menu-item>
     </el-submenu>
+    <el-menu-item index="8" class="fr">
+      <el-input
+        placeholder="搜索音乐、MV、歌单、用户"
+        suffix-icon="el-icon-search"
+        v-model="search">
+      </el-input>
+    </el-menu-item>
   </el-menu>
 </template>
 
@@ -29,7 +36,8 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      userInfo: null
+      userInfo: null,
+      search:''
     };
   },
   methods: {
@@ -77,7 +85,7 @@ export default {
   a{
     font-size: @fs;
   }
-  .user-info{
+  .fr{
     float: right;
   }
 }
