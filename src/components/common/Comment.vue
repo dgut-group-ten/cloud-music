@@ -149,8 +149,19 @@ export default {
                 margin-left: 5px;
               }
             }
-            .active:hover{
+            .active{
+              cursor: pointer;
+              &:hover{
+                color: @color-active;
+              }
+            }
+            &:hover::before{
+              content: '举报';
+              display: inline;
               color: @color-active;
+              font-size: @fs;
+              margin-right: 20px;
+              cursor: pointer;
             }
           }
         }
