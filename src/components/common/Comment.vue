@@ -1,7 +1,7 @@
 <template>
   <div class="comment">
     <h1>评论</h1>
-    <span>共1条评论</span>
+    <span>共3条评论</span>
     <!-- 编辑区 -->
     <div class="comment-edit">
       <el-input
@@ -18,7 +18,7 @@
     <!-- 展示区 -->
     <div class="comment-show">
       <h2>最新评论</h2>
-      <span>(1)</span>
+      <span>(3)</span>
       <ul class="comment-list">
         <li class="comment-item">
           <img class="avatar" src="https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=5f4834870d3b5bb5bad727fc06d2d523/2e2eb9389b504fc2a21e8529ebdde71190ef6d5c.jpg">
