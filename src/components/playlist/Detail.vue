@@ -130,7 +130,21 @@ export default {
       let tr = td.parentNode;
       let index = tr.children[0].children[0].children[0].innerHTML;
       let sid = this.playlist.tracks[index-1].sid;
-      this.$router.push({name:'player', query: {sid}});
+
+      // 判断是否已经打开播放器
+      let flag = window.localStorage.getItem('hasPlayerPage');
+      if(!flag){
+        // 标记已生成播放器
+        window.localStorage.setItem('hasPlayerPage',true);
+        // 生成播放器并打开
+        const newTab = this.$router.resolve({name:'player', query: {sid}});
+        window.open(newTab.href,'_blank');
+      } else {
+        this.$message('所选歌曲已经加入播放器');
+        // 将该歌曲添加到播放器,插队播放
+        let playlist =  window.localStorage.getItem('playlist') || [];
+        window.localStorage.setItem('playlist',[sid].concat(playlist));
+      }
     }
   },
   watch: {

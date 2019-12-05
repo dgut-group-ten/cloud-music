@@ -79,8 +79,41 @@ export default {
   created() {
     let sid = this.$route.query.sid;
     getSingleSong(sid).then((res)=>{
+      this.loadMusic(res);
+    })
+
+    // 监听storge的变化
+    window.addEventListener('storage', function(se) {
+      const key = se.key;
+      // 判断是否有新歌曲加入播放器
+      if(key === 'playlist'){
+        console.log(se);
+        // getSingleSong(se.newValue).then((res)=>{
+        //   this.loadMusic(res);
+        //   let newlist = window.localStorage.getItem('playlist').shift();
+        //   window.localStorage.setItem('playlist',newlist);
+        // })
+      }
+    })
+    // 在页面关闭前清除localstorge中的播放信息
+    window.onbeforeunload = function (){
+      this.clear();
+    }
+  },
+  methods:{
+    // 回到首页
+    back(){
+      this.clear();
+      this.$router.push({name:'main'});
+    },
+    // 清除播放器在本地缓存
+    clear() {
+      window.localStorage.removeItem('hasPlayerPage');
+      window.localStorage.removeItem('playlist');
+    },
+    loadMusic(res){
       this.songInfo = res;
-      console.log(res)
+      console.log('res',res);
       // 异步执行，确保获得歌曲信息后再去获取dom结点
       const that = this;
       setTimeout(()=>{
@@ -97,12 +130,6 @@ export default {
         // 初始化音量
         audio.volume = 0.3;
       },20);
-    }) 
-  },
-  methods:{
-    // 回到上一个浏览页面
-    back(){
-      this.$router.back(-1);
     },
     // 控制播放
     contorlPlay(e){
@@ -163,6 +190,8 @@ export default {
       position: relative;
       z-index: 3;
       .back{
+        display:inline-block;
+        width:80px;
         margin-top: 5px;
         margin-left: 15px;
         line-height: 1.8;
