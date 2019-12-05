@@ -9,6 +9,8 @@
 
 <style lang="less">
 @import './styles/reset.css';
+@import './theme/index.css';
+@import './styles/icon-front.css';
 * {
   margin: 0;
   padding: 0;
