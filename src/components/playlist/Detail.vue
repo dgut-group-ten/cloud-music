@@ -58,18 +58,10 @@
           <!-- 按钮组 -->
           <el-table-column label="操作">
             <div class="hide">
-              <el-tooltip effect="light" content="播放" placement="bottom-start">
-                <el-button icon="el-icon-caret-right" circle @click="playSong($event)"></el-button>
-              </el-tooltip>
-              <el-tooltip effect="light" content="添加到歌单" placement="bottom-start">
-                <el-button icon="el-icon-plus" circle></el-button>
-              </el-tooltip>
-              <el-tooltip effect="light" content="下载" placement="bottom-start">
-                <el-button icon="el-icon-download" circle></el-button>
-              </el-tooltip>
-              <el-tooltip effect="light" content="分享" placement="bottom-start">
-                <el-button icon="el-icon-share" circle></el-button>
-              </el-tooltip>
+              <el-button title="播放" icon="el-icon-caret-right" circle @click="playSong($event)"></el-button>
+              <el-button title="添加到歌单" icon="el-icon-plus" circle></el-button>
+              <el-button title="下载" icon="el-icon-download" circle></el-button>
+              <el-button title="分享" icon="el-icon-share" circle></el-button>
             </div>
           </el-table-column>
         </el-table>
