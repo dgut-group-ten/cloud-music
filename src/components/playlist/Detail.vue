@@ -37,9 +37,7 @@
         </div>
         <!-- 按钮组 -->
         <el-row>
-          <el-button type="primary" icon="el-icon-video-play"
-            >播放全部</el-button
-          >
+          <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-star-off">收藏</el-button>
           <el-button icon="el-icon-chat-dot-square">评论 (99)</el-button>
           <el-button icon="el-icon-more-outline">更多</el-button>
@@ -106,6 +104,7 @@ export default {
   created() {
     let lid = this.$route.query.lid
     getPlaylistDetailByLid(lid).then(res => {
+      console.log('歌单信息',res);
       this.playlist = res
       this.total = res.tracks.length;
       this.curList = this.playlist.tracks.slice((this.curPage-1)*10,this.curPage*10);
@@ -116,15 +115,19 @@ export default {
     Breadcrumb,
   },
   methods:{
+    // 生成歌单序号
     indexMethod(index) {
       return (this.curPage-1)*10+index + 1;
     },
+    // 显示按钮组
     showBtnGroup(row, column, cell, event){
       cell.parentNode.children[3].children[0].children[0].classList.remove('hide');
     },
+    // 隐藏按钮组
     hideBtnGroup(row, column, cell, event){
       cell.parentNode.children[3].children[0].children[0].classList.add('hide');
     },
+    // 播放歌曲
     playSong(e){
       let td = e.currentTarget.parentNode.parentNode.parentNode
       let tr = td.parentNode;
@@ -142,9 +145,35 @@ export default {
       } else {
         this.$message('所选歌曲已经加入播放器');
         // 将该歌曲添加到播放器,插队播放
-        let playlist =  window.localStorage.getItem('playlist') || [];
-        window.localStorage.setItem('playlist',[sid].concat(playlist));
+        let playlist =  JSON.parse(window.localStorage.getItem('playlist')) || [];
+        playlist.unshift(sid);
+        window.localStorage.setItem('playlist',JSON.stringify(playlist));
       }
+    },
+    // 播放全部
+    playAll() {
+      // 准备歌单
+      let newList = [];
+      this.playlist.tracks.forEach((item)=>{
+        newList.push(item.sid);
+      })
+
+      // 判断是否已经打开播放器
+      let flag = window.localStorage.getItem('hasPlayerPage');
+      if(!flag){
+        // 标记已生成播放器
+        window.localStorage.setItem('hasPlayerPage',true);
+        // 生成播放器并打开
+        let sid = newList.shift();
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+        const newTab = this.$router.resolve({name:'player', query: {sid}});
+        window.open(newTab.href,'_blank');
+      } else {
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+      }
+      
     }
   },
   watch: {

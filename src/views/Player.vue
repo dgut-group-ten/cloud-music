@@ -10,13 +10,13 @@
       <div class="player-panel">
         <img class="song-avatar" :src="songInfo.cimg" alt="">
         <div class="song-info">
-          <div class="song-name">{{songInfo.name}}</div>
+          <div class="song-name" :title="songInfo.name">{{songInfo.name}}</div>
           <div class="song-author">{{songInfo.authors[0].name}}</div>
         </div>
         <!-- 播放进度条 -->
         <div class="song-progress">
           <span>{{timeFormat(currentTime)}}</span>
-          <el-progress :percentage="percentage" color="#909399" :show-text="false" :stroke-width="1"></el-progress>
+          <el-progress v-if="percentage" :percentage="percentage" color="#909399" :show-text="false" :stroke-width="1"></el-progress>
           <span>{{timeFormat(duration)}}</span>
         </div>
         <!-- 按钮 -->
@@ -24,7 +24,7 @@
           <a class="song-control_item" @click="contorlPlay" href="javascript:;" title="暂停">
             <i class="icon-pause"></i>
           </a>
-          <a class="song-control_item" href="javascript:;" title="下一首">
+          <a class="song-control_item" @click="playNext" href="javascript:;" title="下一首">
             <i class="icon-next"></i>
           </a>
           <a class="song-control_item" @click="contorlVolume" href="javascript:;" title="关闭声音">
@@ -36,8 +36,7 @@
               :show-tooltip="false" 
               :min="0" 
               :max="1" 
-              :step="0.001"
-              :disabled="!canAdjustVol"></el-slider>
+              :step="0.001"></el-slider>
           </div>
           <div class="right-part">
             <a class="song-control_item" href="javascript:;" title="喜欢">
@@ -73,13 +72,14 @@ export default {
       percentage:0,
       volume:0.3,
       volumeCopy:0.3,
-      canAdjustVol:true
+      ismuted:false
     }
   },
   created() {
-    let sid = this.$route.query.sid;
+    const that = this;
+    let sid = that.$route.query.sid;
     getSingleSong(sid).then((res)=>{
-      this.loadMusic(res);
+      that.loadMusic(res);
     })
 
     // 监听storge的变化
@@ -87,12 +87,12 @@ export default {
       const key = se.key;
       // 判断是否有新歌曲加入播放器
       if(key === 'playlist'){
-        console.log(se);
-        // getSingleSong(se.newValue).then((res)=>{
-        //   this.loadMusic(res);
-        //   let newlist = window.localStorage.getItem('playlist').shift();
-        //   window.localStorage.setItem('playlist',newlist);
-        // })
+        let newList = JSON.parse(se.newValue);
+        let sid = newList.shift();
+        getSingleSong(sid).then((res)=>{
+          that.loadMusic(res);
+          window.localStorage.setItem('playlist',JSON.stringify(newList));
+        })
       }
     })
     // 在页面关闭前清除localstorge中的播放信息
@@ -111,13 +111,16 @@ export default {
       window.localStorage.removeItem('hasPlayerPage');
       window.localStorage.removeItem('playlist');
     },
+    // 加载音乐
     loadMusic(res){
-      this.songInfo = res;
+      const that = this;
+      that.songInfo = res;
       console.log('res',res);
       // 异步执行，确保获得歌曲信息后再去获取dom结点
-      const that = this;
       setTimeout(()=>{
         let audio = document.querySelector('#audio');
+        // 设置src
+        audio.src = res.file;
         // 必须要在oncanplay中调用才能获得duration的值
         audio.oncanplay = function () {
           that.duration = audio.duration;
@@ -126,6 +129,9 @@ export default {
         audio.addEventListener("timeupdate",function(){
           that.currentTime = audio.currentTime;
           that.percentage = audio.currentTime/audio.duration*100;
+          if(that.currentTime === that.duration) {
+            that.playNext();
+          }
         })
         // 初始化音量
         audio.volume = 0.3;
@@ -147,18 +153,30 @@ export default {
     // 控制音量
     contorlVolume(e){
       let audio = document.querySelector('#audio');
-      if (!this.canAdjustVol) {
-        this.canAdjustVol = true;
-        audio.volume = this.volumeCopy;
+      if (this.ismuted) {
+        this.ismuted = false;
+        audio.muted = false;
         e.currentTarget.children[0].classList.replace('icon-mute','icon-volume');
         e.currentTarget.title = '关闭声音'; 
       } else{
-        this.canAdjustVol = false;
-        this.volumeCopy = audio.volume;
-        audio.volume = 0;
+        this.ismuted = true;
+        audio.muted = true;
         e.currentTarget.children[0].classList.replace('icon-volume','icon-mute');
         e.currentTarget.title = '打开声音';
       }
+    },
+    // 播放下一首
+    playNext(){
+      let newList = JSON.parse(window.localStorage.getItem('playlist'));
+      if(!newList){
+        this.$message('没有下一首啦，去添加新的歌曲吧！');
+        return;
+      }
+      let sid = newList.shift();
+      getSingleSong(sid).then((res)=>{
+        this.loadMusic(res);
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+      })
     },
     // 时间格式化
     timeFormat(seconds){
@@ -220,6 +238,10 @@ export default {
           padding-top: 20px;
           margin-left: 20px;
           .song-name{
+            width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             font-size: @fs-l;
           }
           .song-author{
@@ -242,6 +264,7 @@ export default {
             margin-right: 8px;
             width:280px;
             transform:translate(0,-2px);
+            transition: opacity 1s;
           }
         }
         .song-control{
