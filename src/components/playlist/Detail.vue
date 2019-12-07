@@ -48,7 +48,7 @@
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
       <el-col :span="18">
-        <el-table :data="curList" stripe
+        <el-table :data="curList" stripe 
           @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
           <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
           <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
@@ -102,6 +102,15 @@ export default {
     }
   },
   created() {
+    const loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+    });
+    setTimeout(() => {
+      loading.close();
+    }, 400);
+
     let lid = this.$route.query.lid
     getPlaylistDetailByLid(lid).then(res => {
       console.log('歌单信息',res);
