@@ -7,7 +7,7 @@
       <!-- 返回键 -->
       <div class="back" @click="back">QO音乐</div>
       <!-- 播放控制面板 -->
-      <div class="player-panel">
+      <div class="player-panel" v-loading="!percentage">
         <img class="song-avatar" :src="songInfo.cimg" alt="">
         <div class="song-info">
           <div class="song-name" :title="songInfo.name">{{songInfo.name}}</div>
@@ -51,6 +51,9 @@
           </div>
         </div>
       </div>
+      <!-- 歌词区域 -->
+      <ul class="lyric"> 
+      </ul>
     </div>
     <div class="player-bg_mask"></div>
     <!-- 背景 -->
@@ -72,7 +75,8 @@ export default {
       percentage:0,
       volume:0.3,
       volumeCopy:0.3,
-      ismuted:false
+      ismuted:false,
+      lineNo:0
     }
   },
   created() {
@@ -95,6 +99,7 @@ export default {
         })
       }
     })
+
     // 在页面关闭前清除localstorge中的播放信息
     window.onbeforeunload = function (){
       this.clear();
@@ -125,6 +130,8 @@ export default {
         audio.oncanplay = function () {
           that.duration = audio.duration;
         }
+        that.lineNo = 0;
+        document.querySelector('.lyric').scrollTop=0;
         // 监听时间变化，提供参数给进度条使用
         audio.addEventListener("timeupdate",function(){
           that.currentTime = audio.currentTime;
@@ -132,9 +139,25 @@ export default {
           if(that.currentTime === that.duration) {
             that.playNext();
           }
+
+          let lrc = that.songInfo.lyric;
+          if(lrc.length !== 0) {
+              if (that.lineNo === lrc.length - 1 && audio.currentTime >= lrc[that.lineNo].time) {
+              that.highlight(that.lineNo);
+            }
+            if (lrc[that.lineNo].time <= audio.currentTime && audio.currentTime <= lrc[that.lineNo + 1].time) {
+              that.highlight(that.lineNo);
+              that.lineNo++;
+            }
+          }
         })
         // 初始化音量
         audio.volume = 0.3;
+
+        //清空原有的歌词，生成新歌词
+        let ul = document.querySelector('.lyric');
+        ul.innerHTML='';
+        that.createLrc(res.lyric);
       },20);
     },
     // 控制播放
@@ -189,6 +212,37 @@ export default {
         s='0'+s;
       }
       return `${m}:${s}`;
+    },
+    // 生成歌词
+    createLrc(lrc){
+      let ul = document.querySelector('.lyric');
+      let li = null;
+
+      if(lrc.length === 0){
+        li = document.createElement('li');
+        li.innerHTML='该歌曲为纯音乐，木有歌词';
+        ul.appendChild(li);
+        return;
+      }
+      lrc.forEach((item)=>{
+        li = document.createElement('li');
+        li.innerHTML=item.text;
+        ul.appendChild(li);
+      })
+    },
+    // 高亮歌词行
+    highlight(lineNo){
+      let ul = document.querySelector('.lyric');
+      // 去除原高亮行的样式,为指定行添加内联样式
+      if(lineNo > 0) {
+        ul.children[lineNo-1].style.color='#e9e4e9';
+      }
+      let nowline = ul.children[lineNo];
+      nowline.style.color='#c40b0b';
+
+      if(nowline.offsetTop-ul.scrollTop>544){
+        ul.scrollTop += 168;
+      }
     }
   },
   watch:{
@@ -243,6 +297,7 @@ export default {
             text-overflow: ellipsis;
             white-space: nowrap;
             font-size: @fs-l;
+            line-height: 1.5;
           }
           .song-author{
             margin-left: 1px;
@@ -268,7 +323,7 @@ export default {
           }
         }
         .song-control{
-          margin-top: 25px;
+          margin-top: 20px;
           margin-left: 18px;
           .song-control_item i{
             margin-right: 18px;
@@ -294,6 +349,17 @@ export default {
             }
           }
         }
+      }
+      .lyric{
+        margin: 0 auto;
+        margin-top: 50px;
+        width:654px;
+        height: 200px;
+        text-align: center;
+        overflow: hidden;
+        font-size: @fs;
+        color: #e9e4e9;
+        line-height: 1.5;
       } 
     }
     .player-bg_mask{
@@ -319,6 +385,5 @@ export default {
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
     }
-    
   }
 </style>
