@@ -1,8 +1,14 @@
+/*
+ * @Description: 用户模块接口
+ * @Author: Fang yong
+ * @Date: 2019-11-29 11:35:01
+ * @LastEditors: Allen Tan
+ * @LastEditTime: 2019-12-09 09:53:14
+ */
 import axios from '@/utils/axios.js';
-import {server_url_dev_java, server_url_prod_java} from '@/api/env.js';
+import {getServerURL} from '@/api/env.js';
 
-// const baseURL = server_url_prod_java;
-const baseURL = server_url_dev_java;
+const baseURL = getServerURL('java');
 
 export const register = function register({checkCode, email, name, password}) {
     return axios({

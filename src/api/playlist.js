@@ -3,14 +3,13 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-05 10:18:03
+ * @LastEditTime: 2019-12-09 09:52:14
  */
 
 import axios from '@/utils/axios.js';
-import {server_url_dev_python, server_url_prod_python} from '@/api/env.js';
+import {getServerURL} from '@/api/env.js';
 
-const baseURL = server_url_dev_python;
-// const baseURL = server_url_prod_python;
+const baseURL = getServerURL('python');
 
 /**
  * @description: 根据标签名获取歌单列表
