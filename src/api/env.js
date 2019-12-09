@@ -1,12 +1,26 @@
 /*
- * @Description: 服务器地址配置
+ * @Description: 环境配置
  * @Author: Allen Tan
  * @Date: 2019-12-05 09:30:08
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-05 09:39:57
+ * @LastEditTime: 2019-12-09 09:54:27
  */
 
-export const server_url_prod_python = 'https://music.niracler.com:8002';
-export const server_url_prod_java = 'https://music.niracler.com:8001';
-export const server_url_dev_python = 'https://music-01.niracler.com:8002';
-export const server_url_dev_java = 'https://music-01.niracler.com:8001';
+const curEnv = 'dev';
+// const curEnv = 'prod';
+
+const serverInfo = {
+  prod:'music',
+  dev:'music-01',
+  python:'8002',
+  java:'8001'
+}
+
+/**
+ * @description: 返回服务器地址
+ * @param {lan:后端使用的语言，java|python} 
+ * @return: 服务器地址
+ */
+export const getServerURL = function (lan) {
+  return `https://${serverInfo[curEnv]}.niracler.com:${serverInfo[lan]}`
+}
