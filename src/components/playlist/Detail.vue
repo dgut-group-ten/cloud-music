@@ -39,7 +39,7 @@
         <el-row>
           <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-star-off">收藏</el-button>
-          <el-button icon="el-icon-chat-dot-square">评论 ({{commentNum}})</el-button>
+          <el-button icon="el-icon-chat-dot-square" @click="goToComment">评论 ({{commentNum}})</el-button>
           <el-button icon="el-icon-more-outline">更多</el-button>
         </el-row>
       </div>
@@ -82,7 +82,7 @@
       </el-col>
     </el-row>
     <!-- 评论 -->
-    <comment class="comment" :rid="playlist.lid"></comment>
+    <comment id="comment" class="comment" :rid="playlist.lid"></comment>
   </div>
 </template>
 
@@ -189,6 +189,11 @@ export default {
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
       
+    },
+    // 跳转到评论部分
+    goToComment(){
+      let el = document.querySelector('#comment');
+      document.documentElement.scrollTop = el.offsetTop;
     }
   },
   watch: {
