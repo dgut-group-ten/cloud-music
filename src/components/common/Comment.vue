@@ -1,7 +1,7 @@
 <template>
-  <div class="comment">
+  <div class="comment" v-if="comments">
     <h1>评论</h1>
-    <span>共{{comments.length}}条评论</span>
+    <span>共{{comments.totalElements}}条评论</span>
     <!-- 编辑区 -->
     <div class="comment-edit">
       <el-input
@@ -18,9 +18,9 @@
     <!-- 展示区 -->
     <div class="comment-show">
       <h2>最新评论</h2>
-      <span>({{comments.length}})</span>
-      <ul class="comment-list" v-for="(item,index) in comments" :key="index">
-        <li class="comment-item">
+      <span>({{comments.totalElements}})</span>
+      <ul class="comment-list">
+        <li class="comment-item" v-for="(item,index) in curList" :key="index">
           <img class="avatar" src="https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=5f4834870d3b5bb5bad727fc06d2d523/2e2eb9389b504fc2a21e8529ebdde71190ef6d5c.jpg">
           <div class="comment-desc">
             <div class="comment-operator">
@@ -34,38 +34,27 @@
             <div class="comment-desc__cont">{{item.content}}</div>
             <div class="comment-desc__time">{{timeFormat(item.created)}}</div>
           </div>
-          
-          <ul class="sub-comments">
-            <li class="sub-comment">
-              <span class="sub-comment_name">石原里美</span>
-              <span>回复</span>
-              <span class="sub-comment_replied">有村架纯</span>
-              <span>:</span>
-              <span class="sub-comment_content">lallalalddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd</span>
+          <!-- 子评论 -->
+          <ul class="sub-comments" v-show="item.commentList">
+            <li class="sub-comment" v-for="(subItem,subIndex) in item.commentList" :key="subIndex">
+              <span class="left">
+                <span class="sub-comment_name">{{subItem.user.name}}</span>
+                <span v-if="subItem.repliedUser.uid !== item.user.uid">回复</span>
+                <span class="sub-comment_replied" v-if="subItem.repliedUser.uid !== item.user.uid">{{subItem.repliedUser.name}}</span>
+                <span>:</span>
+                <span class="sub-comment_content">{{subItem.content}}</span>
+              </span>
               <span class="sub-comment_reply_btn">回复</span>
-              <span class="sub-comment_time">2019年12月9日</span>
-            </li>
-            <li class="sub-comment">
-              <span class="sub-comment_name">石原里美</span>
-              <span>回复</span>
-              <span class="sub-comment_replied">有村架纯</span>
-              <span>:</span>
-              <span class="sub-comment_content">lalddddddddddddddddddddddddd</span>
-              <span class="sub-comment_reply_btn">回复</span>
-              <span class="sub-comment_time">2019年12月9日</span>
-            </li>
-            <li class="sub-comment">
-              <span class="sub-comment_name">石原里美</span>
-              <span>回复</span>
-              <span class="sub-comment_replied">有村架纯</span>
-              <span>:</span>
-              <span class="sub-comment_content">lallddddddddddddddddddddddddddddddddd</span>
-              <span class="sub-comment_reply_btn">回复</span>
-              <span class="sub-comment_time">2019年12月9日</span>
+              <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
             </li>
           </ul>
         </li>
       </ul>
+      <!-- 加载更多 -->
+      <div class="load-more">
+        <el-button @click="loadMore" type="text" v-if="isHasMore">加载更多</el-button>
+        <el-button type="text" v-else>别点了，真的一滴都没有了</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -78,22 +67,32 @@ export default {
   data() {
     return {
       textarea:null,
-      comments:[],
-      page:1
+      comments:null,
+      curPage:1,
+      curList:[],
+      isHasMore:true
     }
   },
   props:['rid'],
   created() {
-    getComments(this.rid,this.page).then((res)=>{
-      this.comments = res.data.content;
+    getComments(this.rid,this.curPage,5).then((res)=>{
+      this.comments = res.data;
+      this.curList = this.comments.content;
       console.log('评论',res)
     })
   },
   methods:{
     timeFormat(time) {
       return utc2beijing(time);
+    },
+    loadMore(){
+      this.curPage++;
+      getComments(this.rid,this.curPage,5).then((res)=>{
+        if(res.data.content.length !== 0) { this.curList.push(...res.data.content); }
+        else{ this.isHasMore = false; }
+      })
     }
-  }
+  },
 }
 
 </script>
@@ -135,7 +134,7 @@ export default {
         width: 74%;
         .comment-item{
           padding-top: 12px;
-          margin-bottom: 40px;
+          margin-bottom: 5px;
           border-top: 1px solid #ededed;
           overflow: hidden;
           .avatar{
@@ -190,34 +189,40 @@ export default {
         .sub-comments{
           margin:0 auto;
           margin-top: 30px;
+          margin-bottom: 10px;
           padding:20px 5px;
           width:80%;
           background: #f7f8fa;
+          line-height: 1.5;
           .sub-comment{
             margin-bottom: 30px;
             span{
               vertical-align: top;
             }
+            .left{
+              display: inline-block;
+              width: 510px;
+              word-wrap:break-word;
+              .sub-comment_name,.sub-comment_replied{
+                color:#6864c3;
+              }
+            }
+            .sub-comment_time,.sub-comment_reply_btn{
+              float: right;
+              padding-top: 5px;
+            }
+            .sub-comment_reply_btn{
+              margin-right: 5px;
+            }
           }
           & > li:nth-last-child(1){
             margin-bottom: 0;
           }
-          .sub-comment_name,.sub-comment_replied{
-            color:#6864c3;
-          }
-          .sub-comment_time,.sub-comment_reply_btn{
-            float: right;
-            padding-top: 5px;
-          }
-          .sub-comment_reply_btn{
-            margin-right: 5px;
-          }
-          .sub-comment_content{
-            display: inline-block;
-            width: 330px;
-            word-wrap:break-word;
-          }
         }
+      }
+      .load-more{
+        width: 35%;
+        margin:0 auto;
       }
     }
   }
