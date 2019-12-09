@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-12-09 09:42:24
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 16:51:15
+ * @LastEditTime: 2019-12-09 20:31:47
  */
 
 import axios from '@/utils/axios.js';
@@ -20,5 +20,22 @@ export const getComments = function(rid,page,ps) {
   return axios({
     url: `${baseURL}/comment?rid=${rid}&type=1&p=${page}&ps=${ps}`,
     method: 'get'
+  })
+}
+
+/**
+ * @description: 评论歌单
+ * @param {content:评论内容,resourceId:歌单id} 
+ * @return: 
+ */
+export const commentOnPlaylist = function(content,resourceId){
+  return axios({
+    url: `${baseURL}/comment`,
+    method: 'post',
+    data: {
+      content,
+      type:1,
+      resourceId
+    }
   })
 }
