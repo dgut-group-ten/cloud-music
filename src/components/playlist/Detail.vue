@@ -39,7 +39,7 @@
         <el-row>
           <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-star-off">收藏</el-button>
-          <el-button icon="el-icon-chat-dot-square">评论 (99)</el-button>
+          <el-button icon="el-icon-chat-dot-square">评论 ({{commentNum}})</el-button>
           <el-button icon="el-icon-more-outline">更多</el-button>
         </el-row>
       </div>
@@ -74,7 +74,7 @@
         </el-pagination>
       </el-col>
       <!-- 歌单简介 -->
-      <el-col :span="5" class="desc">
+      <el-col :span="6" class="desc">
         <h3 class="desc-title">简介</h3>
         <div class="desc-cont">
           {{playlist.description}}
@@ -82,12 +82,13 @@
       </el-col>
     </el-row>
     <!-- 评论 -->
-    <comment class="comment"></comment>
+    <comment class="comment" :rid="playlist.lid"></comment>
   </div>
 </template>
 
 <script>
 import { getPlaylistDetailByLid } from '@/api/playlist.js';
+import { getComments } from '@/api/comment.js';
 import Comment from '@/components/common/Comment.vue';
 import Breadcrumb from '@/components/common/Breadcrumb.vue';
 
@@ -98,7 +99,8 @@ export default {
       playlist: null,
       total:null,
       curPage: 1,
-      curList:null
+      curList:null,
+      commentNum:null
     }
   },
   created() {
@@ -117,6 +119,10 @@ export default {
       this.playlist = res
       this.total = res.tracks.length;
       this.curList = this.playlist.tracks.slice((this.curPage-1)*10,this.curPage*10);
+
+      getComments(res.lid,1,5).then((res)=>{
+        this.commentNum = res.data.totalElements;
+      })
     })
   },
   components:{
@@ -241,7 +247,8 @@ export default {
     }
   }
   .detail{
-    padding: 0 7.5%;
+    width: 92.5%;
+    padding-left:7.5%;
     margin-top: 20px;
     .el-table-column .el-button{
       margin: 0;
