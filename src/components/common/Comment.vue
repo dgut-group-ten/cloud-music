@@ -13,7 +13,7 @@
         :autosize="{ minRows: 4, maxRows: 6}"
       >
       </el-input>
-      <el-button class="comment-submit" size="small" type="primary">发表评论</el-button>
+      <el-button class="comment-submit" size="small" type="primary" @click="commentMainFloor">发表评论</el-button>
     </div>
     <!-- 展示区 -->
     <div class="comment-show">
@@ -28,14 +28,14 @@
                 <i class="el-icon-thumb"></i>
                 <span>{{item.likedCount}}</span>
               </div>
-              <i class="el-icon-chat-dot-square active"></i>
+              <span class="active" @click="showSubfloorBlock">回复(0)</span>
             </div>
             <div class="comment-desc__name">{{item.user.name}}</div>
             <div class="comment-desc__cont">{{item.content}}</div>
             <div class="comment-desc__time">{{timeFormat(item.created)}}</div>
           </div>
           <!-- 子评论 -->
-          <ul class="sub-comments" v-show="item.commentList">
+          <ul class="sub-comments" v-if="item.commentList.length !== 0">
             <li class="sub-comment" v-for="(subItem,subIndex) in item.commentList" :key="subIndex">
               <span class="left">
                 <span class="sub-comment_name">{{subItem.user.name}}</span>
@@ -48,6 +48,20 @@
               <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
             </li>
           </ul>
+          <!-- 子楼评论 -->
+          <div class="sub-comment-block" v-show="isShow">
+            <el-button class="sub-comment-block_submit" size="mini">发表</el-button>
+            <el-input
+            class="sub-comment-block_edit"
+              type="textarea"
+              placeholder="哥们，来个神回复"
+              v-model="subTextarea"
+              maxlength="300"
+              show-word-limit
+              :autosize="{ minRows: 2, maxRows: 6}"
+            >
+            </el-input>
+          </div>
         </li>
       </ul>
       <!-- 加载更多 -->
@@ -60,7 +74,7 @@
 </template>
 
 <script>
-import {getComments} from '@/api/comment.js';
+import {getComments, commentOnPlaylist} from '@/api/comment.js';
 import {utc2beijing} from '@/tools/time.js';
 export default {
   name: 'comment',
@@ -70,27 +84,56 @@ export default {
       comments:null,
       curPage:1,
       curList:[],
-      isHasMore:true
+      isHasMore:true,
+      subTextarea:null,
+      isShow:false,
+      curSubFloor:null
     }
   },
   props:['rid'],
   created() {
-    getComments(this.rid,this.curPage,5).then((res)=>{
-      this.comments = res.data;
-      this.curList = this.comments.content;
-      console.log('评论',res)
-    })
+    this.loadComments();
   },
   methods:{
+    // 时间格式化
     timeFormat(time) {
       return utc2beijing(time);
     },
+    // 加载更多
     loadMore(){
       this.curPage++;
       getComments(this.rid,this.curPage,5).then((res)=>{
         if(res.data.content.length !== 0) { this.curList.push(...res.data.content); }
         else{ this.isHasMore = false; }
       })
+    },
+    // 加载评论
+    loadComments(){
+      getComments(this.rid,this.curPage,5).then((res)=>{
+        this.comments = res.data;
+        this.curList = this.comments.content;
+      })
+    },
+    // 主楼评论
+    commentMainFloor(){
+      if(!this.textarea){
+        this.$message('别闹！你什么都没写好么！');
+      }
+      commentOnPlaylist(this.textarea,this.rid)
+      .then((res)=>{
+        this.$message({
+          message: '上传成功。整个世界将传扬你的惊世之作！',
+          type: 'success'
+        });
+        this.textarea = null;
+        this.loadComments();
+      })
+    },
+    // 展开副楼评论区
+    showSubfloorBlock(e){
+      e.currentTarget.innerHTML = '收起回复';
+      const target = e.currentTarget.parentNode.parentNode.parentNode.children[2];
+      target.style.display = 'block';
     }
   },
 }
@@ -209,7 +252,6 @@ export default {
             }
             .sub-comment_time,.sub-comment_reply_btn{
               float: right;
-              padding-top: 5px;
             }
             .sub-comment_reply_btn{
               margin-right: 5px;
@@ -217,6 +259,20 @@ export default {
           }
           & > li:nth-last-child(1){
             margin-bottom: 0;
+          }
+        }
+        .sub-comment-block{
+          width:90%;
+          margin: 5px auto;
+          margin-top: 25px;
+          padding: 10px;
+          border-radius: 10px;
+          background: #f7f8fa;
+          .sub-comment-block_submit{
+            float: right;
+          }
+          .sub-comment-block_edit{
+            width:90%;
           }
         }
       }
