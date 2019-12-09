@@ -59,14 +59,12 @@ export default {
     // 滚动回到顶部
     scrollToTop() {
       let that = this;
-
       // 返回顶部动画特效
       setTimeout(function animation() {
         if (that.scrollTop > 0) {
           setTimeout(() => {
-
             // 步进速度
-            const speed = 8;
+            const speed = 8*that.scrollTop/100;
             that.scrollTop -= speed;
 
             // 返回顶部
