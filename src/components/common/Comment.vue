@@ -34,6 +34,20 @@
             <div class="comment-desc__cont">{{item.content}}</div>
             <div class="comment-desc__time">{{timeFormat(item.created)}}</div>
           </div>
+          <!-- 子楼评论 -->
+          <div class="sub-comment-block" style="display:none;">
+            <el-button class="sub-comment-block_submit" size="mini" @click="commentSubFloor(index)">发表</el-button>
+            <el-input
+            class="sub-comment-block_edit"
+              type="textarea"
+              placeholder="哥们，来个神回复"
+              v-model="subTextarea"
+              maxlength="300"
+              show-word-limit
+              :autosize="{ minRows: 2, maxRows: 6}"
+            >
+            </el-input>
+          </div>
           <!-- 子评论 -->
           <ul class="sub-comments" v-if="item.commentList.length !== 0">
             <li class="sub-comment" v-for="(subItem,subIndex) in item.commentList" :key="subIndex">
@@ -48,20 +62,6 @@
               <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
             </li>
           </ul>
-          <!-- 子楼评论 -->
-          <div class="sub-comment-block" v-show="isShow">
-            <el-button class="sub-comment-block_submit" size="mini">发表</el-button>
-            <el-input
-            class="sub-comment-block_edit"
-              type="textarea"
-              placeholder="哥们，来个神回复"
-              v-model="subTextarea"
-              maxlength="300"
-              show-word-limit
-              :autosize="{ minRows: 2, maxRows: 6}"
-            >
-            </el-input>
-          </div>
         </li>
       </ul>
       <!-- 加载更多 -->
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {getComments, commentOnPlaylist} from '@/api/comment.js';
+import {getComments, commentOnPlaylist, commentOnComment} from '@/api/comment.js';
 import {utc2beijing} from '@/tools/time.js';
 export default {
   name: 'comment',
@@ -86,8 +86,8 @@ export default {
       curList:[],
       isHasMore:true,
       subTextarea:null,
-      isShow:false,
-      curSubFloor:null
+      pastTarget:null,
+      pastTextEl:null
     }
   },
   props:['rid'],
@@ -129,11 +129,48 @@ export default {
         this.loadComments();
       })
     },
-    // 展开副楼评论区
+    // 子楼评论
+    commentSubFloor(index){
+      if(!this.subTextarea){
+        this.$message('别闹！你什么都没写好么！');
+      }
+      commentOnComment(this.subTextarea,this.rid,this.curList[index].cid)
+      .then((res)=>{
+        this.$message({
+          message: '上传成功。整个世界将传扬你的惊世之作！',
+          type: 'success'
+        });
+        this.subTextarea = null;
+        this.loadComments();
+      })
+    },
+    // 展开子楼评论区
     showSubfloorBlock(e){
-      e.currentTarget.innerHTML = '收起回复';
       const target = e.currentTarget.parentNode.parentNode.parentNode.children[2];
-      target.style.display = 'block';
+      if(!this.isExpand(e)){
+        // 将之前打开的子楼关闭
+        if(this.pastTarget !== null && this.pastTarget !== target){
+          this.pastText.innerHTML = '回复(0)';
+          this.pastTarget.style.display = 'none';
+        }
+        // 记录打开过的子楼相关信息
+        this.pastTarget = target;
+        this.pastText = e.currentTarget;
+        this.subTextarea = null;
+        target.style.display = 'block';
+      } else {
+        target.style.display = 'none';
+      }
+    },
+    // 判断子楼是否以及展开
+    isExpand(e){
+      if(e.currentTarget.innerHTML[0] === '回') {
+        e.currentTarget.innerHTML = '收起回复';
+        return false;
+      } else {
+        e.currentTarget.innerHTML = '回复(0)';
+        return true;        
+      }
     }
   },
 }
@@ -231,7 +268,7 @@ export default {
         }
         .sub-comments{
           margin:0 auto;
-          margin-top: 30px;
+          margin-top: 10px;
           margin-bottom: 10px;
           padding:20px 5px;
           width:80%;
@@ -262,9 +299,8 @@ export default {
           }
         }
         .sub-comment-block{
-          width:90%;
+          width:80%;
           margin: 5px auto;
-          margin-top: 25px;
           padding: 10px;
           border-radius: 10px;
           background: #f7f8fa;
