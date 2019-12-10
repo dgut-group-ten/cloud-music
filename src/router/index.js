@@ -4,6 +4,7 @@ import Home from '../views/Home.vue';
 import Player from '../views/Player.vue';
 import Main from '@/components/playlist/Main.vue';
 import Detail from '@/components/playlist/Detail.vue';
+import Search from '@/components/search/Search.vue';
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,11 @@ const routes = [
         path:'home/detail',
         name:'detail',
         component: Detail
+      },
+      {
+        path:'search',
+        name:'search',
+        component: Search
       }
     ]
   },
@@ -35,6 +41,11 @@ const routes = [
     component: Player
   }
 ];
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const router = new VueRouter({
   mode: 'hash',

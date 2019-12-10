@@ -22,22 +22,24 @@
     </el-submenu>
     <el-menu-item index="8" class="fr">
       <el-input
-        placeholder="搜索音乐、MV、歌单、用户"
-        suffix-icon="el-icon-search"
-        v-model="search">
+        placeholder="搜索音乐、歌单、用户"
+        v-model="searchText"
+        @keyup.enter.native="search">
+        <i slot="suffix" class="el-icon-search" @click="search"></i>
       </el-input>
     </el-menu-item>
   </el-menu>
 </template>
 
 <script>
+import merge from 'webpack-merge';
 export default {
   name: 'Head',
   data() {
     return {
       activeIndex: '1',
       userInfo: null,
-      search:''
+      searchText:''
     };
   },
   methods: {
@@ -46,6 +48,12 @@ export default {
     },
     _logout() {
       this.$store.dispatch('logout');
+    },
+    search() {
+      let searchText = this.searchText;
+      if (searchText == null) { return;}
+      this.searchText = null;
+      this.$router.push({name:'search',query: {searchText}});
     }
   },
   created() {
@@ -82,6 +90,7 @@ export default {
   box-sizing: border-box;
   width: 100%;
   padding: 0 180px;
+  border: 0;
   a{
     font-size: @fs;
   }
