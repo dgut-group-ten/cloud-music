@@ -23,7 +23,7 @@ service.interceptors.request.use(
     let userInfo = JSON.parse(window.localStorage.getItem('state')).userInfo;
     // 如果登录后，让每个请求携带token
     if (userInfo) { 
-      config.headers['Token'] = userInfo.token;
+      config.headers['Token'] = userInfo.Token;
     }
 
     return config;
