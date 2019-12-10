@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-12-09 09:42:24
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 20:31:47
+ * @LastEditTime: 2019-12-10 16:21:25
  */
 
 import axios from '@/utils/axios.js';
@@ -36,6 +36,24 @@ export const commentOnPlaylist = function(content,resourceId){
       content,
       type:1,
       resourceId
+    }
+  })
+}
+
+/**
+ * @description: 评论别人的评论
+ * @param {content:评论内容,resourceId:歌单id,repliedCommentId:被评论的评论id} 
+ * @return: 
+ */
+export const commentOnComment = function(content, resourceId, repliedCommentId) {
+  return axios({
+    url: `${baseURL}/comment`,
+    method: 'post',
+    data: {
+      content,
+      type:1,
+      resourceId,
+      repliedCommentId
     }
   })
 }
