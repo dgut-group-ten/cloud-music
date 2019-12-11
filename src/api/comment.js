@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-12-09 09:42:24
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-11 11:36:22
+ * @LastEditTime: 2019-12-11 16:31:58
  */
 
 import axios from '@/utils/axios.js';
@@ -63,9 +63,9 @@ export const commentOnComment = function(content, resourceId, repliedCommentId) 
  * @param {type} 
  * @return: 
  */
-export const getSonComments = function(pid,offset){
+export const getSonComments = function(pid,offset,size){
   return axios({
-    url: `${baseURL}/comment/${pid}?offset=${offset}&size=3`,
+    url: `${baseURL}/comment/${pid}?offset=${offset}&size=${size}`,
     method: 'get'
   })
 }
