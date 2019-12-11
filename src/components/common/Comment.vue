@@ -57,7 +57,7 @@
                   <span>:</span>
                   <span class="sub-comment_content">{{subItem.content}}</span>
                 </span>
-                <span class="sub-comment_reply_btn">回复</span>
+                <span class="sub-comment_reply_btn" @click="deepComment(subItem)">回复</span>
                 <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
               </li>
             </ul>
@@ -93,7 +93,9 @@ export default {
       isHasMore:true,
       subTextarea:null,
       pastTarget:null,
-      pastTextEl:null
+      pastTextEl:null,
+      pastItem:null,
+      deepCommentId:null
     }
   },
   props:['rid'],
@@ -122,7 +124,7 @@ export default {
     },
     // 加载子评论
     loadSonComments(item){
-      getSonComments(item.cid,item.commentList.length).then((res)=>{
+      getSonComments(item.cid,item.commentList.length,3).then((res)=>{
         item.commentList.push(...res.data)
       })
     },
@@ -143,10 +145,29 @@ export default {
     },
     // 子楼评论
     commentSubFloor(index){
+      let cid;
+      let subTextarea; 
       if(!this.subTextarea){
         this.$message('别闹！你什么都没写好么！');
+        return;
       }
-      commentOnComment(this.subTextarea,this.rid,this.curList[index].cid)
+
+      // 判断是不是楼中楼评论
+      if (this.deepCommentId && this.subTextarea[0] === '@' && this.subTextarea.includes(':')) {
+        cid = this.deepCommentId;
+        let pos = this.subTextarea.indexOf(':');
+        subTextarea = this.subTextarea.slice(pos+1,this.subTextarea.length);
+        if(!subTextarea){
+          this.$message('别闹！你什么都没写好么！');
+          return;
+        }
+      } else {
+        cid = this.curList[index].cid;
+        subTextarea = this.subTextarea;
+        this.deepCommentId = null;
+      }
+      console.log(cid);
+      commentOnComment(subTextarea,this.rid,cid)
       .then((res)=>{
         this.$message({
           message: '上传成功。整个世界将传扬你的惊世之作！',
@@ -154,10 +175,18 @@ export default {
         });
         this.subTextarea = null;
         this.loadComments();
+
+        if(cid === this.pastItem.cid){
+          this.pastItem.totalCountOfSonComment++;
+        }
+        // 结束楼中楼评论的标记
+        this.deepCommentId = null;
       })
     },
     // 楼中楼评论
-    deepComment(item){
+    deepComment(subItem){
+      this.subTextarea = `@${subItem.user.name}:`;
+      this.deepCommentId = subItem.cid;
     },
     // 展开子楼评论区
     showSubfloorBlock(e,item){
@@ -165,12 +194,13 @@ export default {
       if(!this.isExpand(e,item)){
         // 将之前打开的子楼关闭
         if(this.pastTarget !== null && this.pastTarget !== target){
-          this.pastText.innerHTML = `回复(${item.totalCountOfSonComment})`;
+          this.pastText.innerHTML = `回复(${this.pastItem.totalCountOfSonComment})`;
           this.pastTarget.style.display = 'none';
         }
         // 记录打开过的子楼相关信息
         this.pastTarget = target;
         this.pastText = e.currentTarget;
+        this.pastItem = item;
         this.subTextarea = null;
         target.style.display = 'block';
       } else {
@@ -317,6 +347,10 @@ export default {
               }
               .sub-comment_reply_btn{
                 margin-right: 5px;
+                cursor: pointer;
+                &:hover{
+                  color:@color-active;
+                }
               }
             }
             & > li:nth-last-child(1){
