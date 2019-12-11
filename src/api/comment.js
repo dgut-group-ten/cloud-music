@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-12-09 09:42:24
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-10 16:21:25
+ * @LastEditTime: 2019-12-11 11:36:22
  */
 
 import axios from '@/utils/axios.js';
@@ -55,5 +55,17 @@ export const commentOnComment = function(content, resourceId, repliedCommentId) 
       resourceId,
       repliedCommentId
     }
+  })
+}
+
+/**
+ * @description: 获取指定评论的子评论
+ * @param {type} 
+ * @return: 
+ */
+export const getSonComments = function(pid,offset){
+  return axios({
+    url: `${baseURL}/comment/${pid}?offset=${offset}&size=3`,
+    method: 'get'
   })
 }
