@@ -28,7 +28,7 @@
                 <i class="el-icon-thumb"></i>
                 <span>{{item.likedCount}}</span>
               </div>
-              <span class="active" @click="showSubfloorBlock">回复(0)</span>
+              <span class="active" @click="showSubfloorBlock($event,item)">回复({{item.totalCountOfSonComment}})</span>
             </div>
             <div class="comment-desc__name">{{item.user.name}}</div>
             <div class="comment-desc__cont">{{item.content}}</div>
@@ -47,21 +47,27 @@
               :autosize="{ minRows: 2, maxRows: 6}"
             >
             </el-input>
+            <!-- 子评论 -->
+            <ul class="sub-comments" v-if="item.commentList.length !== 0">
+              <li class="sub-comment" v-for="(subItem,subIndex) in item.commentList" :key="subIndex">
+                <span class="left">
+                  <span class="sub-comment_name">{{subItem.user.name}}</span>
+                  <span v-if="subItem.repliedUser.uid !== item.user.uid">回复</span>
+                  <span class="sub-comment_replied" v-if="subItem.repliedUser.uid !== item.user.uid">{{subItem.repliedUser.name}}</span>
+                  <span>:</span>
+                  <span class="sub-comment_content">{{subItem.content}}</span>
+                </span>
+                <span class="sub-comment_reply_btn">回复</span>
+                <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
+              </li>
+            </ul>
+            <div class="btn-wrapper">
+              <el-button type="text" 
+                @click="loadSonComments(item)"
+                v-if="item.totalCountOfSonComment > item.commentList.length">
+                加载更多</el-button> 
+            </div>
           </div>
-          <!-- 子评论 -->
-          <ul class="sub-comments" v-if="item.commentList.length !== 0">
-            <li class="sub-comment" v-for="(subItem,subIndex) in item.commentList" :key="subIndex">
-              <span class="left">
-                <span class="sub-comment_name">{{subItem.user.name}}</span>
-                <span v-if="subItem.repliedUser.uid !== item.user.uid">回复</span>
-                <span class="sub-comment_replied" v-if="subItem.repliedUser.uid !== item.user.uid">{{subItem.repliedUser.name}}</span>
-                <span>:</span>
-                <span class="sub-comment_content">{{subItem.content}}</span>
-              </span>
-              <span class="sub-comment_reply_btn">回复</span>
-              <span class="sub-comment_time">{{timeFormat(subItem.created)}}</span>
-            </li>
-          </ul>
         </li>
       </ul>
       <!-- 加载更多 -->
@@ -74,7 +80,7 @@
 </template>
 
 <script>
-import {getComments, commentOnPlaylist, commentOnComment} from '@/api/comment.js';
+import {getComments, commentOnPlaylist, commentOnComment, getSonComments} from '@/api/comment.js';
 import {utc2beijing} from '@/tools/time.js';
 export default {
   name: 'comment',
@@ -104,7 +110,7 @@ export default {
       this.curPage++;
       getComments(this.rid,this.curPage,5).then((res)=>{
         if(res.data.content.length !== 0) { this.curList.push(...res.data.content); }
-        else{ this.isHasMore = false; }
+        if(this.curList.length === this.comments.totalElements){ this.isHasMore = false; }
       })
     },
     // 加载评论
@@ -112,6 +118,12 @@ export default {
       getComments(this.rid,this.curPage,5).then((res)=>{
         this.comments = res.data;
         this.curList = this.comments.content;
+      })
+    },
+    // 加载子评论
+    loadSonComments(item){
+      getSonComments(item.cid,item.commentList.length).then((res)=>{
+        item.commentList.push(...res.data)
       })
     },
     // 主楼评论
@@ -144,13 +156,16 @@ export default {
         this.loadComments();
       })
     },
+    // 楼中楼评论
+    deepComment(item){
+    },
     // 展开子楼评论区
-    showSubfloorBlock(e){
+    showSubfloorBlock(e,item){
       const target = e.currentTarget.parentNode.parentNode.parentNode.children[2];
-      if(!this.isExpand(e)){
+      if(!this.isExpand(e,item)){
         // 将之前打开的子楼关闭
         if(this.pastTarget !== null && this.pastTarget !== target){
-          this.pastText.innerHTML = '回复(0)';
+          this.pastText.innerHTML = `回复(${item.totalCountOfSonComment})`;
           this.pastTarget.style.display = 'none';
         }
         // 记录打开过的子楼相关信息
@@ -163,15 +178,15 @@ export default {
       }
     },
     // 判断子楼是否以及展开
-    isExpand(e){
+    isExpand(e,item){
       if(e.currentTarget.innerHTML[0] === '回') {
         e.currentTarget.innerHTML = '收起回复';
         return false;
       } else {
-        e.currentTarget.innerHTML = '回复(0)';
+        e.currentTarget.innerHTML = `回复(${item.totalCountOfSonComment})`;
         return true;        
       }
-    }
+    },
   },
 }
 
@@ -266,38 +281,6 @@ export default {
             }
           }
         }
-        .sub-comments{
-          margin:0 auto;
-          margin-top: 10px;
-          margin-bottom: 10px;
-          padding:20px 5px;
-          width:80%;
-          background: #f7f8fa;
-          line-height: 1.5;
-          .sub-comment{
-            margin-bottom: 30px;
-            span{
-              vertical-align: top;
-            }
-            .left{
-              display: inline-block;
-              width: 510px;
-              word-wrap:break-word;
-              .sub-comment_name,.sub-comment_replied{
-                color:#6864c3;
-              }
-            }
-            .sub-comment_time,.sub-comment_reply_btn{
-              float: right;
-            }
-            .sub-comment_reply_btn{
-              margin-right: 5px;
-            }
-          }
-          & > li:nth-last-child(1){
-            margin-bottom: 0;
-          }
-        }
         .sub-comment-block{
           width:80%;
           margin: 5px auto;
@@ -309,6 +292,39 @@ export default {
           }
           .sub-comment-block_edit{
             width:90%;
+          }
+          .sub-comments{
+            margin-top: 15px;
+            margin-bottom: 10px;
+            width:100%;
+            background: #f7f8fa;
+            line-height: 1.5;
+            .sub-comment{
+              margin-bottom: 30px;
+              span{
+                vertical-align: top;
+              }
+              .left{
+                display: inline-block;
+                width: 510px;
+                word-wrap:break-word;
+                .sub-comment_name,.sub-comment_replied{
+                  color:#6864c3;
+                }
+              }
+              .sub-comment_time,.sub-comment_reply_btn{
+                float: right;
+              }
+              .sub-comment_reply_btn{
+                margin-right: 5px;
+              }
+            }
+            & > li:nth-last-child(1){
+              margin-bottom: 0;
+            }
+          }
+          .btn-wrapper{
+            text-align: center;
           }
         }
       }
