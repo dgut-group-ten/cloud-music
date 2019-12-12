@@ -9,22 +9,33 @@
       </el-input>
     </header>
     <main>
-      <nav>
-        <span>单曲</span>
-        <span>歌单</span>
-        <span>用户</span>
-      </nav>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="单曲" name="first">
+          <Tab :label="'单曲'" :text="text"></Tab>
+        </el-tab-pane>
+        <el-tab-pane label="歌单" name="second">
+          <Tab :label="'歌单'" :text="text"></Tab>
+        </el-tab-pane>
+        <el-tab-pane label="用户" name="third">
+          <Tab :label="'用户'" :text="text"></Tab>
+        </el-tab-pane>
+      </el-tabs>
     </main>
   </div>
 </template>
 
 <script>
+import Tab from '@/components/search/Tab.vue';
 export default {
   name:'Search',
   data(){
     return {
-      searchText:null
+      searchText:null,
+      activeName: 'first'
     }
+  },
+  components:{
+    Tab
   },
   computed: {
     text(){
@@ -33,13 +44,20 @@ export default {
   },
   watch: {
     text(newValue){
+      window.location.reload();
       this.searchText = newValue;
+    }
+  },
+  methods: {
+    handleClick(){
+      
     }
   }
 }
 
 </script>
 <style scoped lang='less'>
+@import '../../styles/common.less';
   .search{
     margin-top: -2px;
     .banner{
@@ -56,12 +74,9 @@ export default {
       }
     }
     main{
-      nav {
-        padding: 10px;
-        span{
-          margin-right: 30px;
-        }
-      }
+      padding: 10px;
+      width: 80%;
+      margin: 0 auto;
     }
   }
 </style>
