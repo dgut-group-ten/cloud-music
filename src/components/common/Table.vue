@@ -3,12 +3,12 @@
     <el-table :data="list" stripe 
       @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
       <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
-      <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
-      <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
+      <el-table-column prop="name" :label="title[0]" :width="width"></el-table-column>
+      <el-table-column :prop="prop" :label="title[1]"></el-table-column>
       <!-- 按钮组 -->
-      <el-table-column label="操作">
+      <el-table-column :label="title[2]">
         <div class="hide">
-          <el-button title="播放" icon="el-icon-caret-right" circle @click="playSong($event)"></el-button>
+          <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
           <el-button title="添加到歌单" icon="el-icon-plus" circle></el-button>
           <el-button title="下载" icon="el-icon-download" circle></el-button>
           <el-button title="分享" icon="el-icon-share" circle></el-button>
@@ -33,10 +33,10 @@ export default {
   data(){
     return{
       curPage: 1,
-      list:null
+      list:null,
     }
   },
-  props:['curList','playlist','total'],
+  props:['curList','playlist','total','title','prop','width'],
   created(){
     this.list = this.curList;
   },
@@ -53,12 +53,26 @@ export default {
     hideBtnGroup(row, column, cell, event){
       cell.parentNode.children[3].children[0].children[0].classList.add('hide');
     },
-    // 播放歌曲
-    playSong(e){
-      let td = e.currentTarget.parentNode.parentNode.parentNode
+    // 播放
+    play(e){
+      let td = e.currentTarget.parentNode.parentNode.parentNode;
       let tr = td.parentNode;
       let index = tr.children[0].children[0].children[0].innerHTML;
-      let sid = this.playlist.tracks[index-1].sid || this.playlist.results[index-1].sid;
+
+      if(this.title[1] === '歌手') {
+        this.playSong(index);
+      } else {
+        this.playPlaylist(index);
+      }
+    },
+    // 播放歌曲
+    playSong(index){
+      let sid;
+      if(this.playlist.tracks){
+        sid = this.playlist.tracks[index-1].sid;
+      }  else {
+        sid = this.playlist.results[index-1].sid;
+      }
 
       // 判断是否已经打开播放器
       let flag = window.localStorage.getItem('hasPlayerPage');
@@ -76,10 +90,35 @@ export default {
         window.localStorage.setItem('playlist',JSON.stringify(playlist));
       }
     },
+    // 播放歌单
+    playPlaylist(index){
+      // 准备歌单
+      let newList = this.playlist.results[index-1].tracks;
+
+      // 判断是否已经打开播放器
+      let flag = window.localStorage.getItem('hasPlayerPage');
+      if(!flag){
+        // 标记已生成播放器
+        window.localStorage.setItem('hasPlayerPage',true);
+        // 生成播放器并打开
+        let sid = newList.shift();
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+        const newTab = this.$router.resolve({name:'player', query: {sid}});
+        window.open(newTab.href,'_blank');
+      } else {
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+      }
+    }
   },
   watch: {
     curPage(newValue, oldValue){
-      this.list = this.playlist.tracks.slice((newValue-1)*10,newValue*10) || this.playlist.results.slice((newValue-1)*10,newValue*10);
+      if(this.playlist.tracks){
+        this.list = this.playlist.tracks.slice((newValue-1)*10,newValue*10) 
+      } else {
+        this.list = this.playlist.results.slice((newValue-1)*10,newValue*10);
+      }
     }
   },
 }
@@ -93,7 +132,7 @@ export default {
     display: none;
   }
   .detail-pagination{
-    margin-top: 20px;
+    margin: 20px 0;
     text-align: center;
   }
 </style>

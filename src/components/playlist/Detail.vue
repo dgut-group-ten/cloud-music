@@ -48,7 +48,7 @@
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
       <el-col :span="18">
-        <Table :curList='curList' :playlist="playlist" :total="total"></Table>
+        <Table :curList='curList' :playlist="playlist" :total="total" :title="['歌曲','歌手','操作']" :prop="'authors[0].name'" :width="300"></Table>
       </el-col>
       <!-- 歌单简介 -->
       <el-col :span="6" class="desc">
@@ -132,7 +132,6 @@ export default {
         // 生成所需播放歌单
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
-      
     },
     // 跳转到评论部分
     goToComment(){
