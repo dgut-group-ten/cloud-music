@@ -48,30 +48,7 @@
     <el-row class="detail" :gutter="40">
       <!-- 歌曲列表 -->
       <el-col :span="18">
-        <el-table :data="curList" stripe 
-          @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
-          <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
-          <el-table-column prop="name" label="歌曲" width="300"></el-table-column>
-          <el-table-column prop="authors[0].name" label="歌手"></el-table-column>
-          <!-- 按钮组 -->
-          <el-table-column label="操作">
-            <div class="hide">
-              <el-button title="播放" icon="el-icon-caret-right" circle @click="playSong($event)"></el-button>
-              <el-button title="添加到歌单" icon="el-icon-plus" circle></el-button>
-              <el-button title="下载" icon="el-icon-download" circle></el-button>
-              <el-button title="分享" icon="el-icon-share" circle></el-button>
-            </div>
-          </el-table-column>
-        </el-table>
-        <el-pagination v-if="total > 10"
-          class="detail-pagination"
-          background
-          layout="prev, pager, next"
-          :pager-count="5"
-          :page-size="10"
-          :total="total"
-          :current-page.sync="curPage">
-        </el-pagination>
+        <Table :curList='curList' :playlist="playlist" :total="total"></Table>
       </el-col>
       <!-- 歌单简介 -->
       <el-col :span="6" class="desc">
@@ -91,6 +68,7 @@ import { getPlaylistDetailByLid } from '@/api/playlist.js';
 import { getComments } from '@/api/comment.js';
 import Comment from '@/components/common/Comment.vue';
 import Breadcrumb from '@/components/common/Breadcrumb.vue';
+import Table from '@/components/common/Table.vue';
 
 export default {
   name: 'Detail',
@@ -128,43 +106,9 @@ export default {
   components:{
     Comment,
     Breadcrumb,
+    Table,
   },
   methods:{
-    // 生成歌单序号
-    indexMethod(index) {
-      return (this.curPage-1)*10+index + 1;
-    },
-    // 显示按钮组
-    showBtnGroup(row, column, cell, event){
-      cell.parentNode.children[3].children[0].children[0].classList.remove('hide');
-    },
-    // 隐藏按钮组
-    hideBtnGroup(row, column, cell, event){
-      cell.parentNode.children[3].children[0].children[0].classList.add('hide');
-    },
-    // 播放歌曲
-    playSong(e){
-      let td = e.currentTarget.parentNode.parentNode.parentNode
-      let tr = td.parentNode;
-      let index = tr.children[0].children[0].children[0].innerHTML;
-      let sid = this.playlist.tracks[index-1].sid;
-
-      // 判断是否已经打开播放器
-      let flag = window.localStorage.getItem('hasPlayerPage');
-      if(!flag){
-        // 标记已生成播放器
-        window.localStorage.setItem('hasPlayerPage',true);
-        // 生成播放器并打开
-        const newTab = this.$router.resolve({name:'player', query: {sid}});
-        window.open(newTab.href,'_blank');
-      } else {
-        this.$message('所选歌曲已经加入播放器');
-        // 将该歌曲添加到播放器,插队播放
-        let playlist =  JSON.parse(window.localStorage.getItem('playlist')) || [];
-        playlist.unshift(sid);
-        window.localStorage.setItem('playlist',JSON.stringify(playlist));
-      }
-    },
     // 播放全部
     playAll() {
       // 准备歌单
@@ -194,11 +138,6 @@ export default {
     goToComment(){
       let el = document.querySelector('#comment');
       document.documentElement.scrollTop = el.offsetTop;
-    }
-  },
-  watch: {
-    curPage(newValue, oldValue){
-      this.curList = this.playlist.tracks.slice((newValue-1)*10,newValue*10);
     }
   },
 }
@@ -255,16 +194,6 @@ export default {
     width: 92.5%;
     padding-left:7.5%;
     margin-top: 20px;
-    .el-table-column .el-button{
-      margin: 0;
-    }
-    .hide{
-      display: none;
-    }
-    .detail-pagination{
-      margin-top: 20px;
-      text-align: center;
-    }
     .desc-title{
       font-weight: @fw-l;
     }
