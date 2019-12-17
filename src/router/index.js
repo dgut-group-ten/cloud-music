@@ -5,6 +5,8 @@ import Player from '../views/Player.vue';
 import Main from '@/components/playlist/Main.vue';
 import Detail from '@/components/playlist/Detail.vue';
 import Search from '@/components/search/Search.vue';
+import Mine from '@/components/mine/Mine.vue';
+import Prompt from '@/components/mine/Prompt.vue';
 
 Vue.use(VueRouter);
 
@@ -32,6 +34,16 @@ const routes = [
         path:'search',
         name:'search',
         component: Search
+      },
+      {
+        path:'mine',
+        name:'mine',
+        component: Mine
+      },
+      {
+        path:'prompt',
+        name:'prompt',
+        component: Prompt
       }
     ]
   },
@@ -39,7 +51,8 @@ const routes = [
     path: '/player',
     name: 'player',
     component: Player
-  }
+  },
+  
 ];
 
 // 解决自跳转控制台出现的警告
@@ -51,6 +64,21 @@ VueRouter.prototype.push = function push(location) {
 const router = new VueRouter({
   mode: 'history',
   routes
+});
+
+// 全局路由拦截-进入页面前执行
+router.beforeEach((to, from, next) => {
+  if(to.path === '/mine'){
+    let state = JSON.parse(localStorage.getItem("state")) || null;
+    if(state === null || state.userInfo === null){
+      next('/prompt');
+    } else {
+      next();
+    }
+  } else {
+    // 继续执行
+    next();
+  }
 });
 
 export default router;
