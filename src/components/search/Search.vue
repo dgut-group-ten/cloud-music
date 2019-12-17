@@ -17,9 +17,6 @@
         <el-tab-pane label="歌单" name="second">
           <Tab :label="'歌单'" :text="text"></Tab>
         </el-tab-pane>
-        <el-tab-pane label="用户" name="third">
-          <Tab :label="'用户'" :text="text"></Tab>
-        </el-tab-pane>
       </el-tabs>
     </main>
   </div>
@@ -67,7 +64,7 @@ export default {
     .banner{
       height:247px;
       text-align: center;
-      background-image: url(https://s2.ax1x.com/2019/12/10/QDhCyn.md.jpg);
+      background-image: url(https://y.gtimg.cn/mediastyle/yqq/img/bg_search.jpg);
       background-position: 0 70%;
       background-size: cover;
       .input{

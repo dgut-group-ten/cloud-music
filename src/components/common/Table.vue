@@ -3,13 +3,20 @@
     <el-table :data="list" stripe 
       @cell-mouse-enter="showBtnGroup" @cell-mouse-leave="hideBtnGroup">
       <el-table-column type="index" :index="indexMethod" width="80"></el-table-column>
+      <el-table-column v-if="title[1] === '创建者'" prop="cimg" label="封面" min-width="30" >
+        <!-- 图片的显示 -->
+        <template slot-scope="scope">            
+          <img :src="scope.row.cimg" min-width="70" height="70" />
+        </template>         
+      </el-table-column> 
       <el-table-column prop="name" :label="title[0]" :width="width"></el-table-column>
       <el-table-column :prop="prop" :label="title[1]"></el-table-column>
       <!-- 按钮组 -->
       <el-table-column :label="title[2]">
         <div class="hide">
+          <el-button  v-if="title[1] === '创建者'" title="查看详情" icon="el-icon-magic-stick" circle @click="checkDetails($event)"></el-button> 
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
-          <el-button title="添加到歌单" icon="el-icon-plus" circle></el-button>
+          <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
           <el-button title="下载" icon="el-icon-download" circle></el-button>
           <el-button title="分享" icon="el-icon-share" circle></el-button>
         </div>
@@ -47,17 +54,23 @@ export default {
     },
     // 显示按钮组
     showBtnGroup(row, column, cell, event){
-      cell.parentNode.children[3].children[0].children[0].classList.remove('hide');
+      cell.parentNode.lastChild.children[0].children[0].classList.remove('hide');
     },
     // 隐藏按钮组
     hideBtnGroup(row, column, cell, event){
-      cell.parentNode.children[3].children[0].children[0].classList.add('hide');
+      cell.parentNode.lastChild.children[0].children[0].classList.add('hide');
     },
-    // 播放
-    play(e){
+    // 获取点击的索引
+    getIndex(e){
       let td = e.currentTarget.parentNode.parentNode.parentNode;
       let tr = td.parentNode;
       let index = tr.children[0].children[0].children[0].innerHTML;
+
+      return index;
+    },
+    // 播放
+    play(e){
+      let index = this.getIndex(e);
 
       if(this.title[1] === '歌手') {
         this.playSong(index);
@@ -110,6 +123,12 @@ export default {
         // 生成所需播放歌单
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
+    },
+    // 查看歌单详情
+    checkDetails(e){
+      let index = this.getIndex(e);
+      let lid = this.playlist.results[index-1].lid;
+      this.$router.push({name:'detail',query: {lid}});
     }
   },
   watch: {
