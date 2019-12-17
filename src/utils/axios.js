@@ -20,7 +20,10 @@ service.interceptors.request.use(
     ];
 
     // 根据条件加入token-安全携带
-    let userInfo = JSON.parse(window.localStorage.getItem('state')).userInfo;
+    let userInfo
+    if(JSON.parse(window.localStorage.getItem('state'))){
+      userInfo = JSON.parse(window.localStorage.getItem('state')).userInfo;
+    }
     // 如果登录后，让每个请求携带token
     if (userInfo) { 
       config.headers['Token'] = userInfo.Token;
