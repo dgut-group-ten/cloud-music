@@ -35,6 +35,7 @@ export default {
                 });
                 this.$emit('hideDialog');
                 this.$store.dispatch('logined',res.data);
+                this.$router.push({name:'main'});
             })
             .catch(err => {
                 let message = err.response.data.msg || err.message;

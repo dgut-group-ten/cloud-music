@@ -4,7 +4,7 @@
       <router-link to="/home">首页</router-link>
     </el-menu-item>
     <el-menu-item index="2">
-      <router-link to="/home">我的音乐</router-link>
+      <router-link to="/mine">我的音乐</router-link>
     </el-menu-item>
     <el-menu-item index="3">
       <router-link to="/home">MV</router-link>
@@ -48,6 +48,12 @@ export default {
     },
     _logout() {
       this.$store.dispatch('logout');
+      this.$message({
+          message: '您的帐号已成功退出！',
+          type: 'success'
+      });
+      // 回到首页，避免页面权限访问出错
+      this.$router.push({name:'main'});
     },
     search() {
       let searchText = this.searchText;
@@ -58,7 +64,7 @@ export default {
   },
   created() {
     // 查看本地储存中有没有用户登录信息
-    let state = JSON.parse(localStorage.getItem("state") || null);
+    let state = JSON.parse(localStorage.getItem("state")) || null;
     if (state) {
       this.userInfo = state.userInfo;
     }

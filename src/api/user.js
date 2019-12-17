@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 09:53:14
+ * @LastEditTime: 2019-12-17 20:49:53
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -46,5 +46,12 @@ export const login = function login({name, password}) {
             name,
             password
         }
+    })
+}
+
+export const getUserInfo = function(name){
+    return axios({
+        url: `${baseURL}/user/${name}`,
+        method: 'get'
     })
 }
