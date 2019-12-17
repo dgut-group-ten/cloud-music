@@ -42,6 +42,7 @@ const routes = [
   }
 ];
 
+// 解决自跳转控制台出现的警告
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
