@@ -21,14 +21,18 @@
         </div>
         <!-- 导航栏 -->
         <nav>
-          <ul>
-            <li>我喜欢</li>
-            <li>我创建的歌单</li>
-            <li>我上传的歌曲</li>
-          </ul>
+          <input type="radio" id="first" value="first" v-model="option">
+          <label for="first">我喜欢</label>
+          <input type="radio" id="second" value="second" v-model="option">
+          <label for="second">我创建的歌单</label>
+          <input type="radio" id="third" value="third" v-model="option">
+          <label for="third">我上传的歌曲</label>
         </nav>
       </div>
     </header>
+    <main>
+      kk
+    </main>
   </div>
 </template>
 
@@ -38,7 +42,8 @@ export default {
   name: 'Mine',
   data(){
     return {
-      info:null
+      info:null,
+      option:'first'
     }
   },
   created(){
@@ -107,12 +112,27 @@ export default {
           }
         }
         nav{
-          ul li{
-            display: inline-block;
-            margin-right: 15px;
+          position: absolute;
+          left:10%;
+          top:405px;
+          input{
+            display: none;
+          }
+          label{
+            font-size: @fs;
+            font-weight: 300;
+            margin-right: 40px;
+            cursor: pointer;
+          }
+          input[type="radio"]:checked + label{
+            color: @color-active;
           }
         }
       }
+    }
+    main{
+      width: 90%;
+      padding: 20px 10%;
     }
   }
 </style>
