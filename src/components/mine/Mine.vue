@@ -131,7 +131,7 @@ export default {
       }
     }
     main{
-      width: 90%;
+      width: 80%;
       padding: 20px 10%;
     }
   }
