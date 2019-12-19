@@ -143,9 +143,13 @@ export default {
 }
 
 </script>
-<style scoped lang='less'>
+<style lang='less'>
   .el-table-column .el-button{
     margin: 0;
+  }
+  .el-table__body tr,
+  .el-table__body td {
+    height: 66px;
   }
   .hide{
     display: none;
