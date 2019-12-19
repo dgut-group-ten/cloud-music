@@ -31,13 +31,17 @@
       </div>
     </header>
     <main>
-      kk
+      <Favour v-if="option === 'first'"></Favour>
+      <Upload v-if="option === 'third'"></Upload>
     </main>
   </div>
 </template>
 
 <script>
 import {getUserInfo} from '@/api/user.js';
+import Favour from '@/components/mine/Favour.vue';
+import Upload from '@/components/mine/Upload.vue';
+
 export default {
   name: 'Mine',
   data(){
@@ -45,6 +49,10 @@ export default {
       info:null,
       option:'first'
     }
+  },
+  components:{
+    Favour,
+    Upload
   },
   created(){
     let info = JSON.parse(localStorage.getItem('state')).userInfo;
