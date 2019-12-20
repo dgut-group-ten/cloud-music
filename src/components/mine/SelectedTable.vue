@@ -6,17 +6,20 @@
       :data="list"
       tooltip-effect="dark"
       style="width: 100%"
+      @cell-mouse-enter="showBtnGroup"
+      @cell-mouse-leave="hideBtnGroup"
       @selection-change="handleSelectionChange">
       <el-table-column
+        v-if="isSelection" 
         type="selection"
         width="55">
       </el-table-column>
       <el-table-column
         type="index"
         :index="indexMethod"
-        width="50">
+        width="100">
       </el-table-column>
-      <el-table-column label="封面" min-width="30" >
+      <el-table-column label="封面" min-width="30" width="150">
         <!-- 图片的显示 -->
         <template slot-scope="scope">            
           <img :src="scope.row.cimg" min-width="70" height="70" />
@@ -34,7 +37,7 @@
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column label="操作">
-        <template slot-scope="scope">
+        <div slot-scope="scope" class="hide">
           <el-button
             icon="el-icon-caret-right" 
             circle
@@ -51,11 +54,11 @@
             title="下载"
             @click="handle(scope.$index, scope.row)"></el-button>
           <el-button
-            icon="el-icon-s-promotion" 
+            icon="el-icon-share" 
             circle
             title="分享"
             @click="handle(scope.$index, scope.row)"></el-button>
-        </template>
+        </div>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -76,13 +79,15 @@ export default {
   name: 'SelectedTable',
   data(){
     return{
+      multipleSelection: [],
       list:[],
       total:null,
       previous:null,
       next:null,
-      curPage:1
+      page:1
     }
   },
+  props:['isSelection'],
   created(){
     getUserSongs(1).then(res=>{
       this.list = res.results;
@@ -115,7 +120,7 @@ export default {
     },
     // 生成歌单序号
     indexMethod(index) {
-      return (this.curPage-1)*10+index + 1;
+      return (this.page-1)*10+index + 1;
     },
     // 翻页
     pageTurn(page){
@@ -126,6 +131,23 @@ export default {
         this.next = res.next;
         this.page = res.page
       })
+    },
+    // 显示按钮组
+    showBtnGroup(row, column, cell, event){
+      cell.parentNode.lastChild.children[0].children[0].classList.remove('hide');
+    },
+    // 隐藏按钮组
+    hideBtnGroup(row, column, cell, event){
+      cell.parentNode.lastChild.children[0].children[0].classList.add('hide');
+    },
+  },
+  watch: {
+    isSelection(newVal,oldVal){
+      if(newVal) {
+        this.$refs.multipleTable.toggleAllSelection();
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
     }
   }
 }
@@ -135,6 +157,9 @@ export default {
   .wrapper{
     .el-table{
       margin: 20px 0;
+      .hide{
+        display:none;
+      }
     }
     .el-pagination{
       margin: 10px auto;
