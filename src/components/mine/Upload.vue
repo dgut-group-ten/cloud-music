@@ -5,9 +5,10 @@
       <el-button type="primary" icon="el-icon-video-play">播放</el-button>
       <el-button icon="el-icon-circle-plus-outline">添加到</el-button>
       <el-button icon="el-icon-download">下载</el-button>
+      <el-button icon="el-icon-delete">删除</el-button>
       <el-button icon="el-icon-document-copy">批量操作</el-button>
     </div>
-    <SelectedTable></SelectedTable>
+    <SelectedTable :type="'upload'"></SelectedTable>
   </div>
 </template>
 

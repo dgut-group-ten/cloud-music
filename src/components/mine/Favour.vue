@@ -9,7 +9,7 @@
           <el-button icon="el-icon-download">下载</el-button>
           <el-button icon="el-icon-document-copy" @click="batchProcessing($event)">批量操作</el-button>
         </div>
-        <SelectedTable :isSelection="isSelection"></SelectedTable>
+        <SelectedTable :isSelection="isSelection" :type="'favour'"></SelectedTable>
       </el-tab-pane>
       <el-tab-pane label="歌单" name="second">歌单</el-tab-pane>
     </el-tabs>
