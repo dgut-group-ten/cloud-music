@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {getUserSongs} from '@/api/user.js'
+import {getUserUploadedSongs ,getUserFavouriteSongs} from '@/api/user.js'
 export default {
   name: 'SelectedTable',
   data(){
@@ -87,15 +87,10 @@ export default {
       page:1
     }
   },
-  props:['isSelection'],
+  props:['isSelection','type'],
   created(){
-    getUserSongs(1).then(res=>{
-      this.list = res.results;
-      this.total = res.count;
-      this.previous = res.previous;
-      this.next = res.next;
-      this.page = res.page
-    })
+    let fn = this.judgeFn();
+    this.getInfo(fn,1);
   },
   methods: {
     toggleSelection(rows) {
@@ -109,6 +104,24 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    // 判断使用的获取信息函数
+    judgeFn(){
+      if(this.type === 'favour'){
+        return getUserFavouriteSongs;
+      } else if (this.type === 'upload') {
+        return getUserUploadedSongs;
+      }
+    },
+    // 统一查询信息逻辑
+    getInfo(fn,page){
+      fn(page).then(res=>{
+        this.list = res.results;
+        this.total = res.count;
+        this.previous = res.previous;
+        this.next = res.next;
+        this.page = res.page
+      })
     },
     // 将数据中的名字数组格式化成字符串
     nameFormatter(row, column) {
@@ -124,13 +137,8 @@ export default {
     },
     // 翻页
     pageTurn(page){
-      getUserSongs(page).then(res=>{
-        this.list = res.results;
-        this.total = res.count;
-        this.previous = res.previous;
-        this.next = res.next;
-        this.page = res.page
-      })
+      let fn = this.judgeFn();
+      this.getInfo(fn,page);
     },
     // 显示按钮组
     showBtnGroup(row, column, cell, event){
