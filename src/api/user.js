@@ -58,13 +58,25 @@ export const getUserInfo = function(name){
 }
 
 /**
+ * @description: 查询用户上传的歌曲
+ * @param {p:第几页;ps:每一页的长度} 
+ * @return: 上传歌曲的列表
+ */
+export const getUserUploadedSongs = function(p=1,ps=10){
+    return axios({
+        url: `${pythonEndURL}/song/?p=${p}&ps=${ps}`,
+        method: 'get'
+    })
+}
+
+/**
  * @description: 查询用户喜欢的歌曲
  * @param {p:第几页;ps:每一页的长度} 
  * @return: 喜欢歌曲的列表
  */
-export const getUserSongs = function(p=1,ps=10){
+export const getUserFavouriteSongs = function(p=1,ps=10){
     return axios({
-        url: `${pythonEndURL}/song/?p=${p}&ps=${ps}`,
+        url: `${pythonEndURL}/songFav/?p=${p}&ps=${ps}`,
         method: 'get'
     })
 }
