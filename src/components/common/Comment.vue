@@ -21,7 +21,7 @@
       <span>({{comments.totalElements}})</span>
       <ul class="comment-list">
         <li class="comment-item" v-for="(item,index) in curList" :key="index">
-          <img class="avatar" src="https://gss3.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=5f4834870d3b5bb5bad727fc06d2d523/2e2eb9389b504fc2a21e8529ebdde71190ef6d5c.jpg">
+          <img class="avatar" :src="'http://music-01.niracler.com:8001/'+item.user.headIcon">
           <div class="comment-desc">
             <div class="comment-operator">
               <div class="like active">
