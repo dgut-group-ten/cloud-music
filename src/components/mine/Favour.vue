@@ -4,14 +4,21 @@
       <el-tab-pane label="歌曲" name="first">
         <!-- 按钮组 -->
         <div class="btn-group">
-          <el-button type="primary" icon="el-icon-video-play">播放全部</el-button>
+          <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-circle-plus-outline">添加到</el-button>
           <el-button icon="el-icon-download">下载</el-button>
           <el-button icon="el-icon-document-copy" @click="batchProcessing($event)">批量操作</el-button>
         </div>
-        <SelectedTable :isSelection="isSelection" :type="'favour'"></SelectedTable>
+        <SelectedTable 
+        :isSelection="isSelection" 
+        :type="'favour'" 
+        ref="child"></SelectedTable>
       </el-tab-pane>
-      <el-tab-pane label="歌单" name="second">歌单</el-tab-pane>
+      <el-tab-pane label="歌单" name="second">
+        <SelectedTable 
+        :isSelection="isSelection" 
+        :type="'favour'"></SelectedTable>
+      </el-tab-pane>
     </el-tabs>
     
   </div>
@@ -31,6 +38,7 @@ export default {
     SelectedTable
   },
   methods: {
+    // 批量处理
     batchProcessing(e){
       if(this.isSelection){
         e.currentTarget.lastChild.innerHTML = '批量操作';
@@ -38,6 +46,10 @@ export default {
         e.currentTarget.lastChild.innerHTML = '取消批量操作';
       }
       this.isSelection = !this.isSelection;
+    },
+    // 播放全部
+    playAll(){
+      this.$refs.child.playAll();
     }
   }
 }
