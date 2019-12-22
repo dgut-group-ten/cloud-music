@@ -158,6 +158,9 @@ export default {
         let ul = document.querySelector('.lyric');
         ul.innerHTML='';
         that.createLrc(res.lyric);
+
+        // 动态修改页面title
+        document.title = `${this.songInfo.name}-${this.songInfo.authors[0].name} 正在播放`;
       },20);
     },
     // 控制播放
