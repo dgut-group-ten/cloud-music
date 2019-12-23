@@ -23,34 +23,49 @@ const routes = [
       {
         path:'home',
         name:'main',
-        component: Main
+        component: Main,
+        meta:{
+          title: 'QO音乐'
+        }
       },
       {
         path:'home/detail',
         name:'detail',
-        component: Detail
+        component: Detail,
+        meta:{
+          title: '歌单详情'
+        }
       },
       {
         path:'search',
         name:'search',
-        component: Search
+        component: Search,
+        meta:{
+          title: '搜索页面'
+        }
       },
       {
         path:'mine',
         name:'mine',
-        component: Mine
+        component: Mine,
+        meta:{
+          title: '我的音乐'
+        }
       },
       {
         path:'prompt',
         name:'prompt',
-        component: Prompt
+        component: Prompt,
+        meta:{
+          title: '请先进行登录'
+        }
       }
     ]
   },
   {
     path: '/player',
     name: 'player',
-    component: Player
+    component: Player,
   },
   
 ];
@@ -68,6 +83,11 @@ const router = new VueRouter({
 
 // 全局路由拦截-进入页面前执行
 router.beforeEach((to, from, next) => {
+  // 设置每个页的title
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+
   if(to.path === '/mine'){
     let state = JSON.parse(localStorage.getItem("state")) || null;
     if(state === null || state.userInfo === null){

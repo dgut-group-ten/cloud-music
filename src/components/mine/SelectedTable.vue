@@ -42,7 +42,7 @@
             icon="el-icon-caret-right" 
             circle
             title="播放"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handlePlay(scope.$index, scope.row)"></el-button>
           <el-button
             icon="el-icon-plus" 
             circle
@@ -57,6 +57,11 @@
             icon="el-icon-share" 
             circle
             title="分享"
+            @click="handle(scope.$index, scope.row)"></el-button>
+          <el-button
+            icon="el-icon-delete" 
+            circle
+            title="删除"
             @click="handle(scope.$index, scope.row)"></el-button>
         </div>
       </el-table-column>
@@ -148,6 +153,52 @@ export default {
     hideBtnGroup(row, column, cell, event){
       cell.parentNode.lastChild.children[0].children[0].classList.add('hide');
     },
+    // 处理播放事件
+    handlePlay(index,row){
+      this.playSong(row.sid);
+    },
+    // 播放歌曲
+    playSong(sid){
+      // 判断是否已经打开播放器
+      let flag = window.localStorage.getItem('hasPlayerPage');
+      if(!flag){
+        // 标记已生成播放器
+        window.localStorage.setItem('hasPlayerPage',true);
+        // 生成播放器并打开
+        const newTab = this.$router.resolve({name:'player', query: {sid}});
+        window.open(newTab.href,'_blank');
+      } else {
+        this.$message('所选歌曲已经加入播放器');
+        // 将该歌曲添加到播放器,插队播放
+        let playlist =  JSON.parse(window.localStorage.getItem('playlist')) || [];
+        playlist.unshift(sid);
+        window.localStorage.setItem('playlist',JSON.stringify(playlist));
+      }
+    },
+    // 播放全部
+    playAll(){
+      // 准备歌单
+      let newList = [];
+      this.list.forEach((item)=>{
+        newList.push(item.sid);
+      })
+
+      // 判断是否已经打开播放器
+      let flag = window.localStorage.getItem('hasPlayerPage');
+      if(!flag){
+        // 标记已生成播放器
+        window.localStorage.setItem('hasPlayerPage',true);
+        // 生成播放器并打开
+        let sid = newList.shift();
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+        const newTab = this.$router.resolve({name:'player', query: {sid}});
+        window.open(newTab.href,'_blank');
+      } else {
+        // 生成所需播放歌单
+        window.localStorage.setItem('playlist',JSON.stringify(newList));
+      }
+    }
   },
   watch: {
     isSelection(newVal,oldVal){
