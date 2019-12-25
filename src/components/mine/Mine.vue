@@ -27,12 +27,15 @@
           <label for="second">我创建的歌单</label>
           <input type="radio" id="third" value="third" v-model="option">
           <label for="third">我上传的歌曲</label>
+          <input type="radio" id="fourth" value="fourth" v-model="option">
+          <label for="fourth">设置</label>
         </nav>
       </div>
     </header>
     <main>
       <Favour v-if="option === 'first'"></Favour>
       <Upload v-if="option === 'third'"></Upload>
+      <Setting v-if="option === 'fourth'"></Setting>
     </main>
   </div>
 </template>
@@ -41,6 +44,7 @@
 import {getUserInfo} from '@/api/user.js';
 import Favour from '@/components/mine/Favour.vue';
 import Upload from '@/components/mine/Upload.vue';
+import Setting from '@/components/mine/Setting.vue';
 
 export default {
   name: 'Mine',
@@ -52,7 +56,8 @@ export default {
   },
   components:{
     Favour,
-    Upload
+    Upload,
+    Setting
   },
   created(){
     let info = JSON.parse(localStorage.getItem('state')).userInfo;
