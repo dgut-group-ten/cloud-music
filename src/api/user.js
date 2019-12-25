@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2019-12-19 19:35:06
+ * @LastEditTime : 2019-12-25 17:30:20
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -78,5 +78,21 @@ export const getUserFavouriteSongs = function(p=1,ps=10){
     return axios({
         url: `${pythonEndURL}/songFav/?p=${p}&ps=${ps}`,
         method: 'get'
+    })
+}
+
+/**
+ * @description: 修改用户密码
+ * @param {oldPassword:旧密码;newPassword:新密码}} 
+ * @return: 
+ */
+export const modifyPassword = function(oldPassword,newPassword) { 
+    return axios({
+        url: `${javaEndURL}/user/changePassword`,
+        method: 'put',
+        data: {
+            oldPassword,
+            newPassword
+        }
     })
 }
