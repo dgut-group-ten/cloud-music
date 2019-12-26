@@ -7,6 +7,7 @@ import Detail from '@/components/playlist/Detail.vue';
 import Search from '@/components/search/Search.vue';
 import Mine from '@/components/mine/Mine.vue';
 import Prompt from '@/components/mine/Prompt.vue';
+import Reset from '@/components/user/Reset.vue';
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,14 @@ const routes = [
         component: Main,
         meta:{
           title: 'QO音乐'
+        }
+      },
+      {
+        path:'reset',
+        name:'reset',
+        component: Reset,
+        meta:{
+          title: '重置密码'
         }
       },
       {
