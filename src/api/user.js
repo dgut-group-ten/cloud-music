@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2019-12-25 17:30:20
+ * @LastEditTime : 2019-12-26 20:36:40
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -93,6 +93,17 @@ export const modifyPassword = function(oldPassword,newPassword) {
         data: {
             oldPassword,
             newPassword
+        }
+    })
+}
+
+export const modifyMail = function(newEmail,checkCode){
+    return axios({
+        url: `${javaEndURL}/user/rebind`,
+        method: 'put',
+        data: {
+            newEmail,
+            checkCode
         }
     })
 }
