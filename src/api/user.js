@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2019-12-27 17:29:20
+ * @LastEditTime : 2019-12-27 17:45:40
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -108,6 +108,11 @@ export const modifyPassword = function(oldPassword,newPassword) {
     })
 }
 
+/**
+ * @description: 修改认证邮箱
+ * @param {newEmail:绑定的新邮箱,checkCode：验证码} 
+ * @return: 
+ */
 export const modifyMail = function(newEmail,checkCode){
     return axios({
         url: `${javaEndURL}/user/rebind`,
@@ -115,6 +120,19 @@ export const modifyMail = function(newEmail,checkCode){
         data: {
             newEmail,
             checkCode
+        }
+    })
+}
+
+export const modifyPassWhenForgot = function(name,email,checkCode,newPassword){
+    return axios({
+        url: `${javaEndURL}/user/forgotPassword`,
+        method: 'put',
+        data: {
+            name,
+            email,
+            checkCode,
+            newPassword
         }
     })
 }
