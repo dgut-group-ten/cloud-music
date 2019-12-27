@@ -9,11 +9,14 @@
             <el-input v-model="firstForm.mail" placeholder="邮箱帐号"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('first')">下一步</el-button>
+            <el-button type="primary" @click="submitForm('first')">{{btnText[send]}}</el-button>
           </el-form-item>
         </el-form>
         <!-- 正式提交表单 -->
         <el-form v-else :model="secondForm" :rules="secondRules" ref="second">
+          <el-form-item label="输入忘记密码的用户名" prop="name">
+            <el-input v-model="secondForm.name" placeholder="用户名"></el-input>
+          </el-form-item>
           <el-form-item label="输入邮箱中收到的验证码" prop="checkCode">
             <el-input v-model="secondForm.mail" placeholder="验证码"></el-input>
           </el-form-item>
@@ -24,7 +27,7 @@
             <el-input v-model="secondForm.confirmPassword" placeholder="确认密码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('second')">下一步</el-button>
+            <el-button type="primary" @click="submitForm('second')">{{btnText[send]}}</el-button>
           </el-form-item>
         </el-form>
       </main>
@@ -33,7 +36,7 @@
 </template>
 
 <script>
-import {getCheckCode} from '@/api/user.js';
+import {getCheckCode,modifyPassWhenForgot} from '@/api/user.js';
 export default {
   name: 'Reset',
   data(){
@@ -49,6 +52,7 @@ export default {
     return {
       send:0,
       title:['输入帐号','填写相关信息'],
+      btnText:['下一步','提交'],
       firstForm:{
         mail:''
       },
@@ -56,11 +60,13 @@ export default {
         mail: [{ required: true, message: '邮箱帐号不能为空', trigger: 'blur' }]
       },
       secondForm:{
+        name:'',
         checkCode:'',
         password:'',
         confirmPassword:''
       },
       secondRules: {
+        name: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
         checkCode: [{ required: true, message: '验证码不能为空', trigger: 'blur' }],
         password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
         confirmPassword: [{ validator:validatePassword, trigger: 'blur' }],
@@ -78,23 +84,43 @@ export default {
         }
       });
     },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
     handleSubmit(){
       if(this.send===0){
-        getCheckCode(this.firstForm.mail)
-        .then(res=>{
-          this.$message({
-            message: res.message,
-            type: 'success'
-          });
-          this.send = 1 ;
-        })
-        .catch(err=>{
-          let message = err.response.data.msg || err.message;
-          this.$message.error(message);
-        })
+        this.getCode();
       } else {
-
+        this.submit();
       }
+    },
+    getCode(){
+      getCheckCode(this.firstForm.mail)
+      .then(res=>{
+        this.$message({
+          message: res.message,
+          type: 'success'
+        });
+        this.send = 1 ;
+      })
+      .catch(err=>{
+        let message = err.response.data.msg || err.message;
+        this.$message.error(message);
+      })
+    },
+    submit(){
+      modifyPassWhenForgot(this.secondForm.name,this.firstForm.mail,this.secondForm.checkCode,this.secondForm.password)
+      .then(res=>{
+        this.$message({
+          message: res.message,
+          type: 'success'
+        });
+        this.resetForm('second');
+      })
+      .catch(err => {
+        let message = err.response.data.msg || err.message;
+        this.$message.error(message);
+      })
     }
   }
 }
