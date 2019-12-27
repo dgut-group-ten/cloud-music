@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2019-12-26 20:36:40
+ * @LastEditTime : 2019-12-27 17:29:20
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -33,6 +33,17 @@ export const checkCode = function checkCode(to) {
     return axios({
         url: url,
         method: 'post',
+        data: {
+            to
+        }
+    })
+}
+
+export const getCheckCode = function (to) {
+    const url = `${javaEndURL}/email`;
+    return axios({
+        url: url,
+        method: 'put',
         data: {
             to
         }
