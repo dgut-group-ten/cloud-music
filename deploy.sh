@@ -2,10 +2,12 @@
 # @Description: 发布dist到团队github
  # @Author: Allen Tan
  # @Date: 2019-12-17 10:49:44
- # @LastEditors: Allen Tan
- # @LastEditTime: 2019-12-17 10:58:36
+ # @LastEditors  : Allen Tan
+ # @LastEditTime : 2019-12-27 17:35:29
  ###
 
+git branch -D deploy
+git branch -D draft
 git checkout -b draft
 npm run build
 git add -f dist
