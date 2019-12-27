@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2019-12-19 19:35:06
+ * @LastEditTime : 2019-12-27 17:45:40
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -33,6 +33,17 @@ export const checkCode = function checkCode(to) {
     return axios({
         url: url,
         method: 'post',
+        data: {
+            to
+        }
+    })
+}
+
+export const getCheckCode = function (to) {
+    const url = `${javaEndURL}/email`;
+    return axios({
+        url: url,
+        method: 'put',
         data: {
             to
         }
@@ -78,5 +89,50 @@ export const getUserFavouriteSongs = function(p=1,ps=10){
     return axios({
         url: `${pythonEndURL}/songFav/?p=${p}&ps=${ps}`,
         method: 'get'
+    })
+}
+
+/**
+ * @description: 修改用户密码
+ * @param {oldPassword:旧密码;newPassword:新密码}} 
+ * @return: 
+ */
+export const modifyPassword = function(oldPassword,newPassword) { 
+    return axios({
+        url: `${javaEndURL}/user/changePassword`,
+        method: 'put',
+        data: {
+            oldPassword,
+            newPassword
+        }
+    })
+}
+
+/**
+ * @description: 修改认证邮箱
+ * @param {newEmail:绑定的新邮箱,checkCode：验证码} 
+ * @return: 
+ */
+export const modifyMail = function(newEmail,checkCode){
+    return axios({
+        url: `${javaEndURL}/user/rebind`,
+        method: 'put',
+        data: {
+            newEmail,
+            checkCode
+        }
+    })
+}
+
+export const modifyPassWhenForgot = function(name,email,checkCode,newPassword){
+    return axios({
+        url: `${javaEndURL}/user/forgotPassword`,
+        method: 'put',
+        data: {
+            name,
+            email,
+            checkCode,
+            newPassword
+        }
     })
 }
