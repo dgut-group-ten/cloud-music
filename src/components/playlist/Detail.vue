@@ -38,7 +38,7 @@
         <!-- 按钮组 -->
         <el-row>
           <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
-          <el-button icon="el-icon-star-off">收藏</el-button>
+          <el-button icon="el-icon-star-off" @click="handleFavour">收藏</el-button>
           <el-button icon="el-icon-chat-dot-square" @click="goToComment">评论 ({{commentNum}})</el-button>
           <el-button icon="el-icon-more-outline">更多</el-button>
         </el-row>
@@ -66,6 +66,7 @@
 <script>
 import { getPlaylistDetailByLid } from '@/api/playlist.js';
 import { getComments } from '@/api/comment.js';
+import { collectPlaylist } from '@/api/favour.js';
 import Comment from '@/components/common/Comment.vue';
 import Breadcrumb from '@/components/common/Breadcrumb.vue';
 import Table from '@/components/common/Table.vue';
@@ -137,6 +138,13 @@ export default {
     goToComment(){
       let el = document.querySelector('#comment');
       document.documentElement.scrollTop = el.offsetTop;
+    },
+    // 收藏歌单
+    handleFavour() {
+      collectPlaylist(this.playlist.lid)
+      .then(res=>{
+        console.log(res)
+      })
     }
   },
 }
