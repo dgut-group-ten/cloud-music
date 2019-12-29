@@ -9,12 +9,17 @@
           <img :src="scope.row.cimg" min-width="70" height="70" />
         </template>         
       </el-table-column> 
-      <el-table-column prop="name" :label="title[0]" :width="width"></el-table-column>
+      <el-table-column v-if="title[1] === '创建者'" prop="name" :label="title[0]" :width="width">
+        <!-- 格式化为链接 -->
+        <template slot-scope="scope">            
+          <router-link :to="{name:'detail',query: {lid:scope.row.lid}}">{{scope.row.name}}</router-link>
+        </template> 
+      </el-table-column>
+      <el-table-column v-else prop="name" :label="title[0]" :width="width"></el-table-column>
       <el-table-column :prop="prop" :label="title[1]"></el-table-column>
       <!-- 按钮组 -->
       <el-table-column :label="title[2]">
-        <div class="hide">
-          <el-button  v-if="title[1] === '创建者'" title="查看详情" icon="el-icon-magic-stick" circle @click="checkDetails($event)"></el-button> 
+        <div class="hide"> 
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
           <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
           <el-button title="下载" icon="el-icon-download" circle></el-button>
@@ -124,12 +129,6 @@ export default {
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
     },
-    // 查看歌单详情
-    checkDetails(e){
-      let index = this.getIndex(e);
-      let lid = this.playlist.results[index-1].lid;
-      this.$router.push({name:'detail',query: {lid}});
-    }
   },
   watch: {
     curPage(newValue, oldValue){
