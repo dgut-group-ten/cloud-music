@@ -40,7 +40,6 @@
           <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-star-off" @click="handleFavour">收藏</el-button>
           <el-button icon="el-icon-chat-dot-square" @click="goToComment">评论 ({{commentNum}})</el-button>
-          <el-button icon="el-icon-more-outline">更多</el-button>
         </el-row>
       </div>
     </div>
