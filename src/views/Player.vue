@@ -117,7 +117,6 @@ export default {
     loadMusic(res){
       const that = this;
       that.songInfo = res;
-      console.log('res',res);
       // 异步执行，确保获得歌曲信息后再去获取dom结点
       setTimeout(()=>{
         let audio = document.querySelector('#audio');
@@ -247,7 +246,7 @@ export default {
     // 收藏歌曲
     handleFavour() {
       collectSong(this.songInfo.sid)
-      .then(res=>{
+      .then(()=>{
         this.$message({
           message: '收藏成功',
           type: 'success'
@@ -259,7 +258,7 @@ export default {
     }
   },
   watch:{
-    volume(newValue, oldValue){
+    volume(newValue){
       let audio = document.querySelector("#audio");
       audio.volume = newValue; 
     }
