@@ -18,10 +18,20 @@ const baseURL = getServerURL('python');
  */
 export const collectPlaylist = function(playlist){
   return axios({
-    url: `${baseURL}/playlistFav`,
+    url: `${baseURL}/playlistFav/`,
     method: 'post',
     data:{
       playlist
+    }
+  })
+}
+
+export const collectSong = function (song) {
+  return axios({
+    url: `${baseURL}/songFav/`,
+    method: 'post',
+    data:{
+      song
     }
   })
 }
