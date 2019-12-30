@@ -13,7 +13,7 @@
       </li>
     </ul>
     <section class="gallery-main">
-      <el-carousel type="card" height="300px" :autoplay="false" trigger="click" 
+      <el-carousel type="card" height="350px" :autoplay="false" trigger="click" 
         ref="carousel" @click.native="_toDetailPage"> 
         <el-carousel-item v-for="(item, index) in playlist" :key="index">
           <img class="gallery-main__img" :src="item.cimg">
