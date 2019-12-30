@@ -39,11 +39,8 @@
               :step="0.001"></el-slider>
           </div>
           <div class="right-part">
-            <a class="song-control_item" href="javascript:;" title="喜欢">
+            <a class="song-control_item" href="javascript:;" title="喜欢" @click="handleFavour">
               <i class="icon-like"></i>
-            </a>
-            <a class="song-control_item" href="javascript:;" title="删除">
-              <i class="icon-delete"></i>
             </a>
             <a class="song-control_item" href="javascript:;" title="更多">
               <i class="icon-more"></i>
@@ -64,7 +61,7 @@
 
 <script>
 import {getSingleSong} from '@/api/playlist.js';
-import { watch } from 'fs';
+import {collectSong} from '@/api/favour.js';
 export default {
   name: 'Player',
   data() {
@@ -246,6 +243,19 @@ export default {
       if(nowline.offsetTop-ul.scrollTop>544){
         ul.scrollTop += 168;
       }
+    },
+    // 收藏歌曲
+    handleFavour() {
+      collectSong(this.songInfo.sid)
+      .then(res=>{
+        this.$message({
+          message: '收藏成功',
+          type: 'success'
+        });
+      })
+      .catch(err=>{
+        this.$message.error(err.response.data.non_field_errors[0]);
+      })
     }
   },
   watch:{

@@ -143,7 +143,13 @@ export default {
     handleFavour() {
       collectPlaylist(this.playlist.lid)
       .then(res=>{
-        console.log(res)
+        this.$message({
+          message: '收藏成功',
+          type: 'success'
+        });
+      })
+      .catch(err=>{
+        this.$message.error(err.response.data.non_field_errors[0]);
       })
     }
   },
