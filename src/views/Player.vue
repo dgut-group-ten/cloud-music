@@ -42,9 +42,6 @@
             <a class="song-control_item" href="javascript:;" title="喜欢" @click="handleFavour">
               <i class="icon-like"></i>
             </a>
-            <a class="song-control_item" href="javascript:;" title="更多">
-              <i class="icon-more"></i>
-            </a>
           </div>
         </div>
       </div>

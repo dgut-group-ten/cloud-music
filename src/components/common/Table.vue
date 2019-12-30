@@ -22,8 +22,8 @@
         <div class="hide"> 
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
           <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
-          <el-button title="下载" icon="el-icon-download" circle></el-button>
-          <el-button title="分享" icon="el-icon-share" circle></el-button>
+          <el-button title="下载" icon="el-icon-download" circle @click="download($event)"></el-button>
+          <el-button title="分享" icon="el-icon-share" circle @click="share"></el-button>
         </div>
       </el-table-column>
     </el-table>
@@ -129,6 +129,34 @@ export default {
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
     },
+    // 下载歌曲
+    download(e){
+      let index = this.getIndex(e);
+      let url = this.playlist.tracks[index-1].file;
+      let filename = this.playlist.tracks[index-1].name;
+
+      // 将lob对象转换为域名结合式的url
+      let blob = new Blob([url], {
+        type:"application/zip"
+      });
+      let blobUrl = window.URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      document.body.appendChild(link);
+      link.style.display = 'none';
+      link.href = blobUrl;
+      // 设置a标签的下载属性，设置文件名及格式，后缀名最好让后端在数据格式中返回
+      link.download = filename;
+      // 自触发click事件
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    },
+    // 分享
+    share(){
+      let clipBoardContent = window.location.host;
+      console.log(clipBoardContent)
+      window.clipboardData.setData("Text",clipBoardContent);
+    }
   },
   watch: {
     curPage(newValue, oldValue){
