@@ -23,7 +23,7 @@
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
           <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
           <el-button title="下载" icon="el-icon-download" circle @click="download($event)"></el-button>
-          <el-button title="分享" icon="el-icon-share" circle @click="share"></el-button>
+          <el-button title="分享" icon="el-icon-share" circle @click="share($event)"></el-button>
         </div>
       </el-table-column>
     </el-table>
@@ -46,6 +46,7 @@ export default {
     return{
       curPage: 1,
       list:null,
+      copyContent:''
     }
   },
   props:['curList','playlist','total','title','prop','width'],
@@ -137,7 +138,7 @@ export default {
 
       // 将lob对象转换为域名结合式的url
       let blob = new Blob([url], {
-        type:"application/zip"
+        type:"audio/mpeg"
       });
       let blobUrl = window.URL.createObjectURL(blob);
       let link = document.createElement('a');
@@ -152,10 +153,34 @@ export default {
       window.URL.revokeObjectURL(blobUrl);
     },
     // 分享
-    share(){
-      let clipBoardContent = window.location.host;
-      console.log(clipBoardContent)
-      window.clipboardData.setData("Text",clipBoardContent);
+    share(e){
+      let index = this.getIndex(e);
+      let sid = this.playlist.tracks[index-1].sid;
+      let host = window.location.host;
+      let url = `${host}/player?sid=${sid}`;
+
+      this.$confirm(url, '歌曲播放链接', {
+        confirmButtonText: '复制分享',
+        cancelButtonText: '算了吧',
+      }).then(() => {
+        let copyContent = document.querySelector('.el-message-box__message').innerText;
+        let oInput = document.createElement('input');
+        oInput.value = copyContent;
+        document.body.appendChild(oInput);
+        oInput.select();// 选择对象
+        document.execCommand("Copy");// 执行浏览器复制命令
+        oInput.style.display='none';
+
+        this.$message({
+          type: 'success',
+          message: '已复制至剪贴板，快去分享给小伙伴吧!'
+        });
+      }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消分享'
+          });          
+        });
     }
   },
   watch: {
