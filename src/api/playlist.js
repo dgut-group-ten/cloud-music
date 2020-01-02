@@ -2,8 +2,8 @@
  * @Description: 歌单模块的网络请求接口
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
- * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 09:52:14
+ * @LastEditors  : Allen Tan
+ * @LastEditTime : 2020-01-02 11:18:10
  */
 
 import axios from '@/utils/axios.js';
@@ -16,9 +16,9 @@ const baseURL = getServerURL('python');
  * @param { name: 标签名} 
  * @return: 歌单列表（含多个歌单）
  */
-export const getPlaylistByTagName = function (name) {
+export const getPlaylistByTagName = function (name,ordering) {
   return axios({
-    url: `${baseURL}/playlist/?tags=${name}&ps=8`,
+    url: `${baseURL}/playlist/?tags=${name}&ps=8&ordering=${ordering}`,
     method: 'get'
   })
 }
