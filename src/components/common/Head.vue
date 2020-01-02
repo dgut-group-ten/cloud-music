@@ -6,12 +6,12 @@
     <el-menu-item index="2">
       <router-link to="/mine">我的音乐</router-link>
     </el-menu-item>
-    <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin" class="fr">登录</el-menu-item>
-    <el-submenu index="7" v-if="isLogin" class="fr">
+    <el-menu-item index="3" @click="_loginHandle" v-if="!isLogin" class="fr">登录</el-menu-item>
+    <el-submenu index="4" v-if="isLogin" class="fr">
       <template slot="title">{{userInfo.name}}</template>
-      <el-menu-item index="7-1" @click="_logout">退出登录</el-menu-item>
+      <el-menu-item index="4-1" @click="_logout">退出登录</el-menu-item>
     </el-submenu>
-    <el-menu-item index="8" class="fr">
+    <el-menu-item index="5" class="fr">
       <el-input
         placeholder="搜索音乐、歌单、用户"
         v-model="searchText"
