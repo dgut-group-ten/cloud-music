@@ -176,11 +176,11 @@ export default {
           message: '已复制至剪贴板，快去分享给小伙伴吧!'
         });
       }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消分享'
-          });          
-        });
+        this.$message({
+          type: 'info',
+          message: '取消分享'
+        });          
+      });
     }
   },
   watch: {
