@@ -49,7 +49,7 @@ export default {
     },
     _getPlaylist(){
       let tagName = this.info.tags[this.curIndex];
-      getPlaylistByTagName(tagName)
+      getPlaylistByTagName(tagName,'-click')
       .then(res => {
         this.playlist = res.results;
       });
