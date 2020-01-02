@@ -2,12 +2,12 @@
  * @Description: 环境配置
  * @Author: Allen Tan
  * @Date: 2019-12-05 09:30:08
- * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 09:54:27
+ * @LastEditors  : Allen Tan
+ * @LastEditTime : 2020-01-02 21:52:04
  */
 
-const curEnv = 'dev';
-// const curEnv = 'prod';
+// const curEnv = 'dev';
+const curEnv = 'prod';
 
 const serverInfo = {
   prod:'music',
