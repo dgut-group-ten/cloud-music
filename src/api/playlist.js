@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2020-01-02 11:18:10
+ * @LastEditTime : 2020-01-02 21:35:26
  */
 
 import axios from '@/utils/axios.js';
@@ -45,5 +45,22 @@ export const getSingleSong = function(sid) {
   return axios({
     url: `${baseURL}/song/${sid}`,
     method: 'get'
+  })
+}
+
+/**
+ * @description: 创建歌单
+ * @param {stags:标签拼接成的字符串;name:歌单名;description:简介;cimg:图片} 
+ * @return: 
+ */
+export const createPlaylist = function(stags,name,description) {
+  return axios({
+    url: `${baseURL}/playlist/`,
+    method: 'post',
+    data: {
+      stags,
+      name,
+      description
+    }
   })
 }

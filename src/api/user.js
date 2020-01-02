@@ -3,7 +3,7 @@
  * @Author: Fang yong
  * @Date: 2019-11-29 11:35:01
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2020-01-02 09:54:56
+ * @LastEditTime : 2020-01-02 20:28:54
  */
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
@@ -102,6 +102,18 @@ export const getUserFavouritePlaylists = function(p=1,ps = 10) {
         url: `${pythonEndURL}/playlistFav/?p=${p}&ps=${ps}`,
         method: 'get'
     }) 
+}
+
+/**
+ * @description: 查询用户创建的歌单
+ * @param {p:第几页;ps:每一页的长度} 
+ * @return: 喜欢歌曲的列表
+ */
+export const getUserCreatedPlaylist =function(p=1,ps = 10) {
+    return axios({
+        url: `${pythonEndURL}/playlist/?p=${p}&ps=${ps}`,
+        method: 'get'
+    })
 }
 
 /**
