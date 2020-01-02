@@ -34,6 +34,7 @@
     </header>
     <main>
       <Favour v-if="option === 'first'"></Favour>
+      <Created v-if="option === 'second'"></Created>
       <Upload v-if="option === 'third'"></Upload>
       <Setting v-if="option === 'fourth'"></Setting>
     </main>
@@ -45,6 +46,7 @@ import {getUserInfo} from '@/api/user.js';
 import {getUserFavouriteSongs,getUserFavouritePlaylists} from '@/api/user.js';
 import Favour from '@/components/mine/Favour.vue';
 import Upload from '@/components/mine/Upload.vue';
+import Created from '@/components/mine/Created.vue';
 import Setting from '@/components/mine/Setting.vue';
 
 export default {
@@ -60,7 +62,8 @@ export default {
   components:{
     Favour,
     Upload,
-    Setting
+    Setting,
+    Created
   },
   created(){
     let info = JSON.parse(localStorage.getItem('state')).userInfo;

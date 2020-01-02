@@ -26,7 +26,7 @@
         </template>         
       </el-table-column>
       <el-table-column
-        v-if="type !== 'playlist'"
+        v-if="type === 'favour' || type === 'upload'"
         prop="name"
         label="歌曲"
         width="320">
@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="type !== 'playlist'"
+        v-if="type === 'favour'"
         prop="authors"
         label="歌手"
         :formatter="nameFormatter"
@@ -62,13 +62,13 @@
             title="播放"
             @click="handlePlay(scope.$index, scope.row)"></el-button>
           <el-button
-            v-if="type !== 'playlist'"
+            v-if="type === 'favour'"
             icon="el-icon-plus" 
             circle
             title="添加到歌单"
             @click="handle(scope.$index, scope.row)"></el-button>
           <el-button
-            v-if="type !== 'playlist'"
+            v-if="type === 'favour'"
             icon="el-icon-download" 
             circle
             title="下载"
@@ -81,8 +81,8 @@
           <el-button
             icon="el-icon-delete" 
             circle
-            title="取消收藏"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            :title="type === 'upload' || type === 'created' ?'删除':'取消收藏'"
+            @click="handleCancel(scope.$index, scope.row)"></el-button>
         </div>
       </el-table-column>
     </el-table>
@@ -99,7 +99,8 @@
 </template>
 
 <script>
-import {getUserUploadedSongs ,getUserFavouriteSongs, getUserFavouritePlaylists} from '@/api/user.js';
+import {getUserUploadedSongs ,getUserFavouriteSongs, getUserFavouritePlaylists,getUserCreatedPlaylist} from '@/api/user.js';
+import {cancelFavSong,cancelFavPlaylist,deleteOwnSong,deleteOwnPlaylist} from '@/api/favour.js';
 export default {
   name: 'SelectedTable',
   data(){
@@ -138,6 +139,8 @@ export default {
         return getUserUploadedSongs;
       } else if (this.type === 'playlist') {
         return getUserFavouritePlaylists;
+      } else if(this.type === 'created') {
+        return getUserCreatedPlaylist;
       }
     },
     // 统一查询信息逻辑
@@ -230,7 +233,44 @@ export default {
       });
     },
     // 处理取消收藏事件
-    handleCancel(){},
+    handleCancel(index,row){
+      if(this.type === 'playlist'){
+        this.cancel(cancelFavPlaylist,row.fid);
+      } else if(this.type === 'favour'){
+        this.cancel(cancelFavSong,row.fid);
+      } else if(this.type === 'upload'){
+        this.delete(deleteOwnSong,row.sid);
+      } else if (this.type ==="created") {
+        this.delete(deleteOwnPlaylist,row.lid);
+      }
+    },
+    // 取消事件
+    cancel(fn,fid) {
+      let message = this.type === 'upload'?'删除成功':'取消成功';
+      fn(fid).then(()=>{
+        this.$message({
+          message,
+          type: 'success'
+        })
+        this.getInfo(fn,1);
+        window.location.reload();
+      })
+    },
+    // 删除事件
+    delete(fn,id){
+      this.$confirm('此操作将永久删除该资源, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.cancel(fn,id);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
     // 播放歌曲
     playSong(sid){
       // 判断是否已经打开播放器
