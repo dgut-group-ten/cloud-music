@@ -6,15 +6,6 @@
     <el-menu-item index="2">
       <router-link to="/mine">我的音乐</router-link>
     </el-menu-item>
-    <el-menu-item index="3">
-      <router-link to="/home">MV</router-link>
-    </el-menu-item>
-    <el-menu-item index="4">
-      <router-link to="/home">电台</router-link>
-    </el-menu-item>
-    <el-menu-item index="5">
-      <router-link to="/home">歌手</router-link>
-    </el-menu-item>
     <el-menu-item index="6" @click="_loginHandle" v-if="!isLogin" class="fr">登录</el-menu-item>
     <el-submenu index="7" v-if="isLogin" class="fr">
       <template slot="title">{{userInfo.name}}</template>
