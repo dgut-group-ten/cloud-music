@@ -24,6 +24,6 @@ export default {
 </script>
 <style scoped lang='less'>
   .wrapper{
-
+    min-height: 400px;
   }
 </style>

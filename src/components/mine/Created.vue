@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <!-- 按钮组 -->
     <div class="btn-group">
       <el-button icon="el-icon-plus" @click="centerDialogVisible = true">新建歌单</el-button>
@@ -111,4 +111,7 @@ export default {
 }
 </script>
 <style scoped lang='less'>
+.wrapper{
+  min-height: 400px;
+}
 </style>
