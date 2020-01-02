@@ -66,7 +66,7 @@
             icon="el-icon-plus" 
             circle
             title="添加到歌单"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleAdd(scope.$index, scope.row)"></el-button>
           <el-button
             v-if="type === 'favour'"
             icon="el-icon-download" 
@@ -110,7 +110,8 @@ export default {
       total:null,
       previous:null,
       next:null,
-      page:1
+      page:1,
+      myPlaylists:[]
     }
   },
   props:['isSelection','type'],
@@ -231,6 +232,12 @@ export default {
             message: '取消分享'
           });          
       });
+    },
+    // 处理添加事件
+    handleAdd(index,row){
+      getUserCreatedPlaylist(1).then((res)=>{
+        this.myPlaylists = res.results;
+      })
     },
     // 处理取消收藏事件
     handleCancel(index,row){
