@@ -17,7 +17,7 @@
       <el-tab-pane label="歌单" name="second">
         <SelectedTable 
         :isSelection="isSelection" 
-        :type="'favour'"></SelectedTable>
+        :type="'playlist'"></SelectedTable>
       </el-tab-pane>
     </el-tabs>
     

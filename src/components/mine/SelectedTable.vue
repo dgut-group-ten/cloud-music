@@ -26,14 +26,32 @@
         </template>         
       </el-table-column>
       <el-table-column
+        v-if="type !== 'playlist'"
         prop="name"
         label="歌曲"
         width="320">
       </el-table-column>
       <el-table-column
+        v-else
+        prop="name"
+        label="歌曲"
+        width="320">
+        <!-- 格式化为链接 -->
+        <template slot-scope="scope">            
+          <router-link :to="{name:'detail',query: {lid:scope.row.lid}}">{{scope.row.name}}</router-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="type !== 'playlist'"
         prop="authors"
         label="歌手"
         :formatter="nameFormatter"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        v-else
+        prop="creator"
+        label="创建者"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column label="操作">
@@ -44,24 +62,26 @@
             title="播放"
             @click="handlePlay(scope.$index, scope.row)"></el-button>
           <el-button
+            v-if="type !== 'playlist'"
             icon="el-icon-plus" 
             circle
             title="添加到歌单"
             @click="handle(scope.$index, scope.row)"></el-button>
           <el-button
+            v-if="type !== 'playlist'"
             icon="el-icon-download" 
             circle
             title="下载"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleDownload(scope.$index, scope.row)"></el-button>
           <el-button
             icon="el-icon-share" 
             circle
             title="分享"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleShare(scope.$index, scope.row)"></el-button>
           <el-button
             icon="el-icon-delete" 
             circle
-            title="删除"
+            title="取消收藏"
             @click="handle(scope.$index, scope.row)"></el-button>
         </div>
       </el-table-column>
@@ -79,7 +99,7 @@
 </template>
 
 <script>
-import {getUserUploadedSongs ,getUserFavouriteSongs} from '@/api/user.js'
+import {getUserUploadedSongs ,getUserFavouriteSongs, getUserFavouritePlaylists} from '@/api/user.js';
 export default {
   name: 'SelectedTable',
   data(){
@@ -116,6 +136,8 @@ export default {
         return getUserFavouriteSongs;
       } else if (this.type === 'upload') {
         return getUserUploadedSongs;
+      } else if (this.type === 'playlist') {
+        return getUserFavouritePlaylists;
       }
     },
     // 统一查询信息逻辑
@@ -157,6 +179,58 @@ export default {
     handlePlay(index,row){
       this.playSong(row.sid);
     },
+    // 处理下载事件
+    handleDownload(index,row){
+      let url = row.file;
+      let filename = row.name;
+
+      // 将lob对象转换为域名结合式的url
+      let blob = new Blob([url], {
+        type:"audio/mpeg"
+      });
+      let blobUrl = window.URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      document.body.appendChild(link);
+      link.style.display = 'none';
+      link.href = blobUrl;
+      // 设置a标签的下载属性，设置文件名及格式，后缀名最好让后端在数据格式中返回
+      link.download = filename;
+      // 自触发click事件
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    },
+    // 处理分享事件
+    handleShare(index,row){
+      let sid = row.sid;
+      let host = window.location.host;
+      let url = `${host}/player?sid=${sid}`;
+
+      this.$confirm(url, '歌曲播放链接', {
+        confirmButtonText: '复制分享',
+        cancelButtonText: '算了吧',
+      }).then(() => {
+        let copyContent = document.querySelector('.el-message-box__message').innerText;
+        let oInput = document.createElement('input');
+        oInput.value = copyContent;
+        document.body.appendChild(oInput);
+        oInput.select();// 选择对象
+        document.execCommand("Copy");// 执行浏览器复制命令
+        oInput.style.display='none';
+
+        this.$message({
+          type: 'success',
+          message: '已复制至剪贴板，快去分享给小伙伴吧!'
+        });
+      }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消分享'
+          });          
+      });
+    },
+    // 处理取消收藏事件
+    handleCancel(){},
     // 播放歌曲
     playSong(sid){
       // 判断是否已经打开播放器

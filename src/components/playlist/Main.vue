@@ -1,7 +1,7 @@
 <template>
   <div>
     <gallery :info="config.playlistRecommended"></gallery>
-    <gallery :info="config.playlistRecommended"></gallery>
+    <gallery :info="config.hotSongs"></gallery>
   </div>
 </template>
 
