@@ -8,16 +8,16 @@ service.interceptors.request.use(
   config => {
     // 做登录过滤 若未登录 则跳到登录页面
     //
-    config.transformRequest = [
-      data => {
-        let ret = '';
-        for (let it in data) {
-          ret +=
-            encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
-        }
-        return ret.substr(0, ret.length - 1);
-      }
-    ];
+    // config.transformRequest = [
+    //   data => {
+    //     let ret = '';
+    //     for (let it in data) {
+    //       ret +=
+    //         encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+    //     }
+    //     return ret.substr(0, ret.length - 1);
+    //   }
+    // ];
 
     // 根据条件加入token-安全携带
     let userInfo
