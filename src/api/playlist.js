@@ -3,13 +3,14 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2020-01-02 21:35:26
+ * @LastEditTime : 2020-01-03 13:59:05
  */
 
 import axios from '@/utils/axios.js';
 import {getServerURL} from '@/api/env.js';
 
 const baseURL = getServerURL('python');
+const qs = require('qs');
 
 /**
  * @description: 根据标签名获取歌单列表
@@ -61,6 +62,21 @@ export const createPlaylist = function(stags,name,description) {
       stags,
       name,
       description
+    }
+  })
+}
+
+/**
+ * @description: 添加歌曲到指定歌单
+ * @param {tracks:新的歌单列表} 
+ * @return: 
+ */
+export const addToPlaylist = function (lid,tracks) {
+  return axios({
+    url: `${baseURL}/playlist/${lid}/`,
+    method: 'patch',
+    data: {
+      tracks
     }
   })
 }
