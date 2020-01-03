@@ -11,11 +11,11 @@
         <!-- 收藏信息 -->
         <div class="collect-info">
           <div class="info-box">
-            <span class="num">582</span>
+            <span class="num">{{songNum}}</span>
             <span class="title">歌曲数</span>
           </div>
           <div class="info-box">
-            <span class="num">15</span>
+            <span class="num">{{playlistNum}}</span>
             <span class="title">歌单数</span>
           </div>
         </div>
@@ -34,6 +34,7 @@
     </header>
     <main>
       <Favour v-if="option === 'first'"></Favour>
+      <Created v-if="option === 'second'"></Created>
       <Upload v-if="option === 'third'"></Upload>
       <Setting v-if="option === 'fourth'"></Setting>
     </main>
@@ -42,8 +43,10 @@
 
 <script>
 import {getUserInfo} from '@/api/user.js';
+import {getUserFavouriteSongs,getUserFavouritePlaylists} from '@/api/user.js';
 import Favour from '@/components/mine/Favour.vue';
 import Upload from '@/components/mine/Upload.vue';
+import Created from '@/components/mine/Created.vue';
 import Setting from '@/components/mine/Setting.vue';
 
 export default {
@@ -51,18 +54,27 @@ export default {
   data(){
     return {
       info:null,
-      option:'first'
+      option:'first',
+      songNum:0,
+      playlistNum:0
     }
   },
   components:{
     Favour,
     Upload,
-    Setting
+    Setting,
+    Created
   },
   created(){
     let info = JSON.parse(localStorage.getItem('state')).userInfo;
     getUserInfo(info.name).then( res => {
       this.info = res.data;
+    })
+    getUserFavouriteSongs(1,10).then(res=>{
+      this.songNum = res.count;
+    })
+    getUserFavouritePlaylists(1,10).then(res=>{
+      this.playlistNum = res.count;
     })
   }
 }

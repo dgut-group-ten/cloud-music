@@ -15,7 +15,7 @@ export default {
 </script>
 <style scoped lang='less'>
   .wrapper{
-    height: 652px;
+    height: 800px;
     width: 100%;
     background: url(https://y.gtimg.cn/mediastyle/yqq/img/bg_profile_unlogin.jpg?max_age=2592000&v=13351eccb28020677a18a0f57349e5e6) 50% no-repeat;
     background-size: cover;

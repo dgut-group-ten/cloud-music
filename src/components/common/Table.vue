@@ -9,16 +9,21 @@
           <img :src="scope.row.cimg" min-width="70" height="70" />
         </template>         
       </el-table-column> 
-      <el-table-column prop="name" :label="title[0]" :width="width"></el-table-column>
+      <el-table-column v-if="title[1] === '创建者'" prop="name" :label="title[0]" :width="width">
+        <!-- 格式化为链接 -->
+        <template slot-scope="scope">            
+          <router-link :to="{name:'detail',query: {lid:scope.row.lid}}">{{scope.row.name}}</router-link>
+        </template> 
+      </el-table-column>
+      <el-table-column v-else prop="name" :label="title[0]" :width="width"></el-table-column>
       <el-table-column :prop="prop" :label="title[1]"></el-table-column>
       <!-- 按钮组 -->
       <el-table-column :label="title[2]">
-        <div class="hide">
-          <el-button  v-if="title[1] === '创建者'" title="查看详情" icon="el-icon-magic-stick" circle @click="checkDetails($event)"></el-button> 
+        <div class="hide"> 
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
-          <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
-          <el-button title="下载" icon="el-icon-download" circle></el-button>
-          <el-button title="分享" icon="el-icon-share" circle></el-button>
+          <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle @click="handleAdd($event)"></el-button>
+          <el-button title="下载" icon="el-icon-download" circle @click="download($event)"></el-button>
+          <el-button title="分享" icon="el-icon-share" circle @click="share($event)"></el-button>
         </div>
       </el-table-column>
     </el-table>
@@ -31,16 +36,38 @@
       :total="total"
       :current-page.sync="curPage">
     </el-pagination>
+    <!-- 对话框 -->
+    <el-dialog
+      title="添加到歌单"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center>
+      <section v-for="(item,index) in myPlaylists" :key="index" class="radio">
+        <input type="radio" :id="item.lid" :value="index" v-model="listIndex">
+        <label :for="item.lid">{{item.name}}</label>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {getUserCreatedPlaylist} from '@/api/user.js';
+import {addToPlaylist} from '@/api/playlist.js';
 export default {
   name:'Table',
   data(){
     return{
       curPage: 1,
       list:null,
+      copyContent:'',
+      myPlaylists:[],
+      dialogVisible:false,
+      listIndex:'',
+      sid:''
     }
   },
   props:['curList','playlist','total','title','prop','width'],
@@ -124,12 +151,86 @@ export default {
         window.localStorage.setItem('playlist',JSON.stringify(newList));
       }
     },
-    // 查看歌单详情
-    checkDetails(e){
+    // 下载歌曲
+    download(e){
       let index = this.getIndex(e);
-      let lid = this.playlist.results[index-1].lid;
-      this.$router.push({name:'detail',query: {lid}});
-    }
+      let url = this.playlist.tracks[index-1].file;
+      let filename = this.playlist.tracks[index-1].name;
+
+      // 将lob对象转换为域名结合式的url
+      let blob = new Blob([url], {
+        type:"audio/mpeg"
+      });
+      let blobUrl = window.URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      document.body.appendChild(link);
+      link.style.display = 'none';
+      link.href = blobUrl;
+      // 设置a标签的下载属性，设置文件名及格式，后缀名最好让后端在数据格式中返回
+      link.download = filename;
+      // 自触发click事件
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    },
+    // 分享
+    share(e){
+      let index = this.getIndex(e);
+      let sid = this.playlist.tracks[index-1].sid;
+      let host = window.location.host;
+      let url = `${host}/player?sid=${sid}`;
+
+      this.$confirm(url, '歌曲播放链接', {
+        confirmButtonText: '复制分享',
+        cancelButtonText: '算了吧',
+      }).then(() => {
+        let copyContent = document.querySelector('.el-message-box__message').innerText;
+        let oInput = document.createElement('input');
+        oInput.value = copyContent;
+        document.body.appendChild(oInput);
+        oInput.select();// 选择对象
+        document.execCommand("Copy");// 执行浏览器复制命令
+        oInput.style.display='none';
+
+        this.$message({
+          type: 'success',
+          message: '已复制至剪贴板，快去分享给小伙伴吧!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消分享'
+        });          
+      });
+    },
+    // 处理添加事件
+    handleAdd(e){
+      let index = this.getIndex(e);
+
+      getUserCreatedPlaylist(1).then((res)=>{
+        this.myPlaylists = res.results;
+        this.dialogVisible = true;
+        this.sid = this.playlist.tracks[index-1].sid;
+      })
+    },
+    // 添加到指定歌单
+    add(){
+      let lid = this.myPlaylists[this.listIndex].lid;
+      let tracks = this.myPlaylists[this.listIndex].tracks;
+      let name = this.myPlaylists[this.listIndex].name;
+      let message = `已添加至"${name}"`
+      tracks.push(this.sid);
+      addToPlaylist(lid,tracks).then(()=>{
+        this.$message({
+          message,
+          type:'success'
+        })
+        this.dialogVisible = false;
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+    },
   },
   watch: {
     curPage(newValue, oldValue){

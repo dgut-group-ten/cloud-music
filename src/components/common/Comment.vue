@@ -117,7 +117,7 @@ export default {
     },
     // 加载评论
     loadComments(){
-      getComments(this.rid,this.curPage,5).then((res)=>{
+      getComments(this.rid,1,this.curPage*5).then((res)=>{
         this.comments = res.data;
         this.curList = this.comments.content;
       })

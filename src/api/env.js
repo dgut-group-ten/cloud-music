@@ -2,8 +2,8 @@
  * @Description: 环境配置
  * @Author: Allen Tan
  * @Date: 2019-12-05 09:30:08
- * @LastEditors: Allen Tan
- * @LastEditTime: 2019-12-09 09:54:27
+ * @LastEditors  : Allen Tan
+ * @LastEditTime : 2020-01-02 22:08:51
  */
 
 const curEnv = 'dev';

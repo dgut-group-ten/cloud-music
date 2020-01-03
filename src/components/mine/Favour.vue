@@ -3,12 +3,12 @@
     <el-tabs v-model="activeName">
       <el-tab-pane label="歌曲" name="first">
         <!-- 按钮组 -->
-        <div class="btn-group">
+        <!-- <div class="btn-group">
           <el-button type="primary" icon="el-icon-video-play" @click="playAll">播放全部</el-button>
           <el-button icon="el-icon-circle-plus-outline">添加到</el-button>
           <el-button icon="el-icon-download">下载</el-button>
           <el-button icon="el-icon-document-copy" @click="batchProcessing($event)">批量操作</el-button>
-        </div>
+        </div> -->
         <SelectedTable 
         :isSelection="isSelection" 
         :type="'favour'" 
@@ -17,7 +17,7 @@
       <el-tab-pane label="歌单" name="second">
         <SelectedTable 
         :isSelection="isSelection" 
-        :type="'favour'"></SelectedTable>
+        :type="'playlist'"></SelectedTable>
       </el-tab-pane>
     </el-tabs>
     
@@ -56,4 +56,7 @@ export default {
 
 </script>
 <style scoped lang='less'>
+.wrapper{
+  min-height: 400px;
+}
 </style>

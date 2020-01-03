@@ -26,14 +26,32 @@
         </template>         
       </el-table-column>
       <el-table-column
+        v-if="type === 'favour' || type === 'upload'"
         prop="name"
         label="歌曲"
         width="320">
       </el-table-column>
       <el-table-column
+        v-else
+        prop="name"
+        label="歌曲"
+        width="320">
+        <!-- 格式化为链接 -->
+        <template slot-scope="scope">            
+          <router-link :to="{name:'detail',query: {lid:scope.row.lid}}">{{scope.row.name}}</router-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="type === 'favour'"
         prop="authors"
         label="歌手"
         :formatter="nameFormatter"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        v-else
+        prop="creator"
+        label="创建者"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column label="操作">
@@ -44,25 +62,27 @@
             title="播放"
             @click="handlePlay(scope.$index, scope.row)"></el-button>
           <el-button
+            v-if="type === 'favour' || type === 'upload'"
             icon="el-icon-plus" 
             circle
             title="添加到歌单"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleAdd(scope.$index, scope.row)"></el-button>
           <el-button
+            v-if="type === 'favour'"
             icon="el-icon-download" 
             circle
             title="下载"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleDownload(scope.$index, scope.row)"></el-button>
           <el-button
             icon="el-icon-share" 
             circle
             title="分享"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            @click="handleShare(scope.$index, scope.row)"></el-button>
           <el-button
             icon="el-icon-delete" 
             circle
-            title="删除"
-            @click="handle(scope.$index, scope.row)"></el-button>
+            :title="type === 'upload' || type === 'created' ?'删除':'取消收藏'"
+            @click="handleCancel(scope.$index, scope.row)"></el-button>
         </div>
       </el-table-column>
     </el-table>
@@ -75,11 +95,28 @@
       :hide-on-single-page="true"
       @current-change="pageTurn">
     </el-pagination>
+    <!-- 对话框 -->
+    <el-dialog
+      title="添加到歌单"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center>
+      <section v-for="(item,index) in myPlaylists" :key="index" class="radio">
+        <input type="radio" :id="item.lid" :value="index" v-model="listIndex">
+        <label :for="item.lid">{{item.name}}</label>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getUserUploadedSongs ,getUserFavouriteSongs} from '@/api/user.js'
+import {getUserUploadedSongs ,getUserFavouriteSongs, getUserFavouritePlaylists,getUserCreatedPlaylist} from '@/api/user.js';
+import {cancelFavSong,cancelFavPlaylist,deleteOwnSong,deleteOwnPlaylist} from '@/api/favour.js';
+import {addToPlaylist} from '@/api/playlist.js';
 export default {
   name: 'SelectedTable',
   data(){
@@ -89,7 +126,11 @@ export default {
       total:null,
       previous:null,
       next:null,
-      page:1
+      page:1,
+      myPlaylists:[],
+      dialogVisible:false,
+      listIndex:'',
+      sid:''
     }
   },
   props:['isSelection','type'],
@@ -116,6 +157,10 @@ export default {
         return getUserFavouriteSongs;
       } else if (this.type === 'upload') {
         return getUserUploadedSongs;
+      } else if (this.type === 'playlist') {
+        return getUserFavouritePlaylists;
+      } else if(this.type === 'created') {
+        return getUserCreatedPlaylist;
       }
     },
     // 统一查询信息逻辑
@@ -156,6 +201,121 @@ export default {
     // 处理播放事件
     handlePlay(index,row){
       this.playSong(row.sid);
+    },
+    // 处理下载事件
+    handleDownload(index,row){
+      let url = row.file;
+      let filename = row.name;
+
+      // 将lob对象转换为域名结合式的url
+      let blob = new Blob([url], {
+        type:"audio/mpeg"
+      });
+      let blobUrl = window.URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      document.body.appendChild(link);
+      link.style.display = 'none';
+      link.href = blobUrl;
+      // 设置a标签的下载属性，设置文件名及格式，后缀名最好让后端在数据格式中返回
+      link.download = filename;
+      // 自触发click事件
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    },
+    // 处理分享事件
+    handleShare(index,row){
+      let sid = row.sid;
+      let host = window.location.host;
+      let url = `${host}/player?sid=${sid}`;
+
+      this.$confirm(url, '歌曲播放链接', {
+        confirmButtonText: '复制分享',
+        cancelButtonText: '算了吧',
+      }).then(() => {
+        let copyContent = document.querySelector('.el-message-box__message').innerText;
+        let oInput = document.createElement('input');
+        oInput.value = copyContent;
+        document.body.appendChild(oInput);
+        oInput.select();// 选择对象
+        document.execCommand("Copy");// 执行浏览器复制命令
+        oInput.style.display='none';
+
+        this.$message({
+          type: 'success',
+          message: '已复制至剪贴板，快去分享给小伙伴吧!'
+        });
+      }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消分享'
+          });          
+      });
+    },
+    // 处理添加事件
+    handleAdd(index,row){
+      getUserCreatedPlaylist(1).then((res)=>{
+        this.myPlaylists = res.results;
+        this.dialogVisible = true;
+        this.sid = row.sid;
+      })
+    },
+    // 添加到指定歌单
+    add(){
+      let lid = this.myPlaylists[this.listIndex].lid;
+      let tracks = this.myPlaylists[this.listIndex].tracks;
+      let name = this.myPlaylists[this.listIndex].name;
+      let message = `已添加至"${name}"`
+      tracks.push(this.sid);
+      addToPlaylist(lid,tracks).then(()=>{
+        this.$message({
+          message,
+          type:'success'
+        })
+        this.dialogVisible = false;
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+    },
+    // 处理取消收藏事件
+    handleCancel(index,row){
+      if(this.type === 'playlist'){
+        this.cancel(cancelFavPlaylist,row.fid);
+      } else if(this.type === 'favour'){
+        this.cancel(cancelFavSong,row.fid);
+      } else if(this.type === 'upload'){
+        this.delete(deleteOwnSong,row.sid);
+      } else if (this.type ==="created") {
+        this.delete(deleteOwnPlaylist,row.lid);
+      }
+    },
+    // 取消事件
+    cancel(fn,fid) {
+      let message = this.type === 'upload'?'删除成功':'取消成功';
+      fn(fid).then(()=>{
+        this.$message({
+          message,
+          type: 'success'
+        })
+        this.getInfo(fn,1);
+        window.location.reload();
+      })
+    },
+    // 删除事件
+    delete(fn,id){
+      this.$confirm('此操作将永久删除该资源, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.cancel(fn,id);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     },
     // 播放歌曲
     playSong(sid){
@@ -223,6 +383,9 @@ export default {
     .el-pagination{
       margin: 10px auto;
       text-align: center;
+    }
+    .radio{
+      margin-bottom: 10px;
     }
   }
   
