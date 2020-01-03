@@ -8,7 +8,7 @@
     <el-dialog
       title="创建新歌单"
       :visible.sync="centerDialogVisible"
-      width="30%"
+      width="50%"
       center>
       <!-- 表单 -->
       <el-form :model="form" :rules="rules" ref="form" label-width="70px">

@@ -62,7 +62,7 @@
             title="播放"
             @click="handlePlay(scope.$index, scope.row)"></el-button>
           <el-button
-            v-if="type === 'favour'"
+            v-if="type === 'favour' || type === 'upload'"
             icon="el-icon-plus" 
             circle
             title="添加到歌单"
@@ -95,12 +95,28 @@
       :hide-on-single-page="true"
       @current-change="pageTurn">
     </el-pagination>
+    <!-- 对话框 -->
+    <el-dialog
+      title="添加到歌单"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center>
+      <section v-for="(item,index) in myPlaylists" :key="index" class="radio">
+        <input type="radio" :id="item.lid" :value="index" v-model="listIndex">
+        <label :for="item.lid">{{item.name}}</label>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {getUserUploadedSongs ,getUserFavouriteSongs, getUserFavouritePlaylists,getUserCreatedPlaylist} from '@/api/user.js';
 import {cancelFavSong,cancelFavPlaylist,deleteOwnSong,deleteOwnPlaylist} from '@/api/favour.js';
+import {addToPlaylist} from '@/api/playlist.js';
 export default {
   name: 'SelectedTable',
   data(){
@@ -111,7 +127,10 @@ export default {
       previous:null,
       next:null,
       page:1,
-      myPlaylists:[]
+      myPlaylists:[],
+      dialogVisible:false,
+      listIndex:'',
+      sid:''
     }
   },
   props:['isSelection','type'],
@@ -237,6 +256,26 @@ export default {
     handleAdd(index,row){
       getUserCreatedPlaylist(1).then((res)=>{
         this.myPlaylists = res.results;
+        this.dialogVisible = true;
+        this.sid = row.sid;
+      })
+    },
+    // 添加到指定歌单
+    add(){
+      let lid = this.myPlaylists[this.listIndex].lid;
+      let tracks = this.myPlaylists[this.listIndex].tracks;
+      let name = this.myPlaylists[this.listIndex].name;
+      let message = `已添加至"${name}"`
+      tracks.push(this.sid);
+      addToPlaylist(lid,tracks).then(()=>{
+        this.$message({
+          message,
+          type:'success'
+        })
+        this.dialogVisible = false;
+      })
+      .catch((err) => {
+        console.log(err.response);
       })
     },
     // 处理取消收藏事件
@@ -344,6 +383,9 @@ export default {
     .el-pagination{
       margin: 10px auto;
       text-align: center;
+    }
+    .radio{
+      margin-bottom: 10px;
     }
   }
   

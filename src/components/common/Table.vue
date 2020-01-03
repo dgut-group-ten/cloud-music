@@ -21,7 +21,7 @@
       <el-table-column :label="title[2]">
         <div class="hide"> 
           <el-button title="播放" icon="el-icon-caret-right" circle @click="play($event)"></el-button>
-          <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle></el-button>
+          <el-button  v-if="title[1] !== '创建者'" title="添加到歌单" icon="el-icon-plus" circle @click="handleAdd($event)"></el-button>
           <el-button title="下载" icon="el-icon-download" circle @click="download($event)"></el-button>
           <el-button title="分享" icon="el-icon-share" circle @click="share($event)"></el-button>
         </div>
@@ -36,17 +36,38 @@
       :total="total"
       :current-page.sync="curPage">
     </el-pagination>
+    <!-- 对话框 -->
+    <el-dialog
+      title="添加到歌单"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center>
+      <section v-for="(item,index) in myPlaylists" :key="index" class="radio">
+        <input type="radio" :id="item.lid" :value="index" v-model="listIndex">
+        <label :for="item.lid">{{item.name}}</label>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {getUserCreatedPlaylist} from '@/api/user.js';
+import {addToPlaylist} from '@/api/playlist.js';
 export default {
   name:'Table',
   data(){
     return{
       curPage: 1,
       list:null,
-      copyContent:''
+      copyContent:'',
+      myPlaylists:[],
+      dialogVisible:false,
+      listIndex:'',
+      sid:''
     }
   },
   props:['curList','playlist','total','title','prop','width'],
@@ -181,7 +202,35 @@ export default {
           message: '取消分享'
         });          
       });
-    }
+    },
+    // 处理添加事件
+    handleAdd(e){
+      let index = this.getIndex(e);
+
+      getUserCreatedPlaylist(1).then((res)=>{
+        this.myPlaylists = res.results;
+        this.dialogVisible = true;
+        this.sid = this.playlist.tracks[index-1].sid;
+      })
+    },
+    // 添加到指定歌单
+    add(){
+      let lid = this.myPlaylists[this.listIndex].lid;
+      let tracks = this.myPlaylists[this.listIndex].tracks;
+      let name = this.myPlaylists[this.listIndex].name;
+      let message = `已添加至"${name}"`
+      tracks.push(this.sid);
+      addToPlaylist(lid,tracks).then(()=>{
+        this.$message({
+          message,
+          type:'success'
+        })
+        this.dialogVisible = false;
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+    },
   },
   watch: {
     curPage(newValue, oldValue){
