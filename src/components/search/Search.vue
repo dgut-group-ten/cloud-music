@@ -60,6 +60,7 @@ export default {
 <style scoped lang='less'>
 @import '../../styles/common.less';
   .search{
+    min-height: 500px;
     margin-top: -2px;
     .banner{
       height:247px;

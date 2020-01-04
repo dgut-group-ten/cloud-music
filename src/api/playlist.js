@@ -3,7 +3,7 @@
  * @Author: Allen Tan
  * @Date: 2019-11-29 20:18:16
  * @LastEditors  : Allen Tan
- * @LastEditTime : 2020-01-03 13:59:05
+ * @LastEditTime : 2020-01-04 09:15:43
  */
 
 import axios from '@/utils/axios.js';
@@ -74,6 +74,9 @@ export const createPlaylist = function(stags,name,description) {
 export const addToPlaylist = function (lid,tracks) {
   return axios({
     url: `${baseURL}/playlist/${lid}/`,
+    headers: {
+        'Content-Type': 'application/json'
+    },
     method: 'patch',
     data: {
       tracks

@@ -13,7 +13,7 @@
     </el-submenu>
     <el-menu-item index="5" class="fr">
       <el-input
-        placeholder="搜索音乐、歌单、用户"
+        placeholder="搜索音乐、歌单"
         v-model="searchText"
         @keyup.enter.native="search">
         <i slot="suffix" class="el-icon-search" @click="search"></i>
