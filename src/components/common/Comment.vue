@@ -132,6 +132,7 @@ export default {
     commentMainFloor(){
       if(!this.textarea){
         this.$message('别闹！你什么都没写好么！');
+        return;
       }
       commentOnPlaylist(this.textarea,this.rid)
       .then((res)=>{
