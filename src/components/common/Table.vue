@@ -206,11 +206,16 @@ export default {
     // 处理添加事件
     handleAdd(e){
       let index = this.getIndex(e);
-
+      let sid;
+      if(this.playlist.tracks){
+        sid = this.playlist.tracks[index-1].sid;
+      }  else {
+        sid = this.playlist.results[index-1].sid;
+      }
       getUserCreatedPlaylist(1).then((res)=>{
         this.myPlaylists = res.results;
         this.dialogVisible = true;
-        this.sid = this.playlist.tracks[index-1].sid;
+        this.sid = sid;
       })
     },
     // 添加到指定歌单
