@@ -259,4 +259,7 @@ export default {
     margin: 20px 0;
     text-align: center;
   }
+  .radio{
+    margin-bottom: 10px;
+  }
 </style>
