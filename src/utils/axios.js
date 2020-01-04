@@ -11,7 +11,6 @@ service.interceptors.request.use(
     config.transformRequest = [
       data => {
         if(data&&data.hasOwnProperty("tracks")){
-          console.log(JSON.stringify(data));
           return JSON.stringify(data);
         }
         let ret = '';
